@@ -19,7 +19,13 @@ export default {
 
 <style>
 body {
-    background-image: url("@/assets/background.png");
+    background-image: url("@/assets/images/background.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
     background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
 }
 </style>
