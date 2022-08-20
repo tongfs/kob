@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * @author tfs
  * @date 2022-08-19
- * @description
+ * @description 解决跨域
  */
 @Configuration
 public class CorsConfig implements Filter {
