@@ -1,8 +1,8 @@
-package com.kob.backend.service.impl;
+package com.kob.backend.util;
 
 import com.kob.backend.pojo.User;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +13,7 @@ import java.util.Collection;
  * @date 2022-08-20
  * @description
  */
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
