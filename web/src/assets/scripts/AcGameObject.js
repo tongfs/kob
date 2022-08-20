@@ -8,16 +8,14 @@ export class AcGameObject {
         this.has_called_start = false;
     }
 
-    start() {   // 只执行一次
-    }
+    // 只执行一次
+    start() {}
 
-    update() {  // 每一帧执行一次，除了第一帧之外
+    // 每一帧执行一次，除了第一帧之外
+    update() {}
 
-    }
-
-    on_destroy() {  // 删除之前执行
-
-    }
+    // 删除之前执行
+    on_destroy() {}
 
     destroy() {
         this.on_destroy();
