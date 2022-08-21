@@ -94,7 +94,7 @@ public class BotServiceImpl implements BotService {
     @Override
     public Map<String, String> update(Map<String, String> map) {
         User user = AuthenticationUtil.getLoginUser();
-        int botId = Integer.parseInt(map.get("bot_id"));
+        int botId = Integer.parseInt(map.get("botId"));
 
         String title = map.get("title");
         String description = map.get("description");

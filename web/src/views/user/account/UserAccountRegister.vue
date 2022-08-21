@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import ContentField from '@/components/ContentField.vue'
+import ContentField from '@/components/ContentField.vue';
 import { ref } from 'vue';
 import router from '@/router/index';
 import $ from 'jquery';
@@ -76,7 +76,6 @@ export default {
 button {
     width: 100%;
 }
-
 div.msg {
     color: red;
 }
