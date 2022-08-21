@@ -73,7 +73,6 @@ public class AccountServiceImpl implements AccountService {
     public Map<String, String> register(String username, String password, String confirmedPassword) {
         Map<String, String> map = new HashMap<>();
 
-
         if (ObjectUtils.isEmpty(username) || ObjectUtils.isEmpty(username.trim())) {
             map.put("msg", "用户名不能为空");
             return map;

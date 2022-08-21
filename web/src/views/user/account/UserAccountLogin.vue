@@ -9,7 +9,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">密码</label>
-                        <input v-model="password" type="password" class="form-control" id="password" placeholder="请输入密码">
+                        <input v-model="password" type="password" class="form-control" id="password"
+                            placeholder="请输入密码">
                     </div>
                     <div class="msg">{{ msg }}</div>
                     <button type="submit" class="btn btn-primary">提交</button>
@@ -23,8 +24,7 @@
 import ContentField from '@/components/ContentField.vue';
 import { useStore } from 'vuex';
 import { ref } from 'vue';
-import router from '@/router';
-
+import router from '@/router/index';
 
 export default {
     components: {
@@ -44,7 +44,7 @@ export default {
                 success() {
                     store.dispatch('getInfo', {
                         success() {
-                            router.push({ name: 'home'})
+                            router.push({ name: 'home' })
                         }
                     })
                 },
@@ -68,6 +68,7 @@ export default {
 button {
     width: 100%;
 }
+
 div.msg {
     color: red;
 }

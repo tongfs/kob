@@ -6,7 +6,7 @@ export default {
         username: '',
         profile: '',
         token: '',
-        is_login: false
+        is_login: false,
     },
     getters: {
     },
@@ -21,12 +21,12 @@ export default {
             state.token = token
         },
         logout(state) {
-            state.id = '',
-            state.username = '',
-            state.profile = '',
-            state.token = '',
-            state.is_login = false
-        }
+            state.id = '';
+            state.username = '';
+            state.profile = '';
+            state.token = '';
+            state.is_login = false;
+        },
     },
     actions: {
         login(context, data) {
@@ -39,6 +39,7 @@ export default {
                 },
                 success(resp) {
                     if (resp.msg === 'success') {
+                        localStorage.setItem('jwt_token', resp.token);
                         context.commit('updateToken', resp.token);  // todo 这个地方为什么和下面不一样？
                         data.success(resp)
                     } else {
@@ -77,10 +78,10 @@ export default {
         },
 
         logout(context) {
+            localStorage.removeItem('jwt_token');
             context.commit('logout');
         }
     },
     modules: {
     }
-  }
-  
+}
