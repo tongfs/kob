@@ -1,3 +1,4 @@
+import router from '@/router';
 import $ from 'jquery'
 
 export default {
@@ -80,6 +81,7 @@ export default {
         logout(context) {
             localStorage.removeItem('jwt_token');
             context.commit('logout');
+            router.push({ name: 'home' })
         }
     },
     modules: {
