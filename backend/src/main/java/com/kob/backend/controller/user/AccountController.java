@@ -19,7 +19,7 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/token")
-    public Map<String, String> getToken(@RequestBody Map<String, String> map) {
+    public Map<String, String> getToken(@RequestParam Map<String, String> map) {
         String username = map.get("username");
         String password = map.get("password");
         return accountService.getToken(username, password);
@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody Map<String, String> map) {
+    public Map<String, String> register(@RequestParam Map<String, String> map) {
         String username = map.get("username");
         String password = map.get("password");
         String confirmedPassword = map.get("confirmedPassword");
