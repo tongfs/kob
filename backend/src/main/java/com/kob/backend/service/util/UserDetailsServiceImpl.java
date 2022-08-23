@@ -1,9 +1,8 @@
-package com.kob.backend.service;
+package com.kob.backend.service.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kob.backend.mapper.UserMapper;
 import com.kob.backend.pojo.User;
-import com.kob.backend.util.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

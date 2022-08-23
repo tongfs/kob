@@ -5,7 +5,7 @@ import com.kob.backend.mapper.UserMapper;
 import com.kob.backend.pojo.User;
 import com.kob.backend.util.AuthenticationUtil;
 import com.kob.backend.util.JwtUtil;
-import com.kob.backend.util.UserDetailsImpl;
+import com.kob.backend.service.util.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
