@@ -11,10 +11,10 @@
             </div>
             <div class="col-6">
                 <div class="user-profile">
-                    <img :src="$store.state.pk.opponent_profile" alt="头像">
+                    <img :src="$store.state.pk.opponent.profile" alt="头像">
                 </div>
                 <div class="user-username">
-                    {{ $store.state.pk.opponent_username }}
+                    {{ $store.state.pk.opponent.username }}
                 </div>
             </div>
             <div class="col-12" style="text-align: center; margin-top: 15vh;">

@@ -2,12 +2,12 @@ import { AcGameObject } from "./AcGameObject";
 import { Cell } from "./Cell";
 
 export class Snake extends AcGameObject {
-    constructor(info, gamemap) {
+    constructor(info, gameMap) {
         super();
 
         this.id = info.id;
         this.color = info.color;
-        this.gamemap = gamemap;
+        this.gameMap = gameMap;
 
         this.body = [new Cell(info.r, info.c)];  // 存放蛇的身体, body[0]存放蛇头
 
@@ -37,8 +37,8 @@ export class Snake extends AcGameObject {
 
     render() {
         const factor = 0.9;
-        const L = this.gamemap.L;
-        const ctx = this.gamemap.ctx;
+        const L = this.gameMap.L;
+        const ctx = this.gameMap.ctx;
 
         ctx.fillStyle = this.color;
         for (const cell of this.body) {
@@ -74,13 +74,6 @@ export class Snake extends AcGameObject {
     next_step() {
         const d = this.eye_direction = this.direction;
         this.next_cell = new Cell(this.body[0].r + this.dr[d], this.body[0].c + this.dc[d]);
-        
-        // 操作非法
-        if (!this.gamemap.check_valid(this.next_cell)) {
-            this.status = 'die';
-            this.color = '#FFFFFF';
-            return;
-        }
         
         this.direction = -1;    // 清空操作
         this.status = 'move';
@@ -126,5 +119,10 @@ export class Snake extends AcGameObject {
         if (this.turns <= 10) return true;
         if (this.turns % 3 === 1) return true;
         return false;
+    }
+
+    die() {
+        this.status = 'die';
+        this.color = '#FFFFFF';
     }
 }

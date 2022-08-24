@@ -1,5 +1,5 @@
 <template>
-    <div ref="parent" class="gamemap">
+    <div ref="parent" class="game-map">
         <canvas ref="canvas" tabindex="0"></canvas>
     </div>
 </template>
@@ -16,19 +16,20 @@ export default {
         let parent = ref(null);
 
         onMounted(() => {
-            new GameMap(canvas.value.getContext('2d'), parent.value, store.state.pk.gamemap);
+            let gameObject = new GameMap(canvas.value.getContext('2d'), parent.value, store.state.pk.gameMap);
+            store.commit('updateGameObject', gameObject);
         });
 
         return {
             canvas,
-            parent
+            parent,
         }
     }
 }
 </script>
 
 <style scoped>
-div.gamemap {
+div.game-map {
     width: 100%;
     height: 100%;
     display: flex;

@@ -2,9 +2,11 @@ export default {
     state: {
         status: 'matching',  // playing表示对战界面
         socket: null,
-        opponent_username: '',
-        opponent_profile: '',
-        gamemap: null,
+        opponent: {},   // 有username和profile两个属性
+        identity: 0,
+        gameMap: null,
+        gameObject: null,
+        loser: 0,
     },
     getters: {
     },
@@ -13,15 +15,21 @@ export default {
             state.socket = socket;
         },
         updateOpponent(state, opponent) {
-            state.opponent_username = opponent.username;
-            state.opponent_profile = opponent.profile;
+            state.opponent = opponent;
         },
         updateStatus(state, status) {
             state.status = status;
         },
-        updateGamemap(state, gamemap) {
-            state.gamemap = gamemap;
+        updateGame(state, data) {
+            state.identity = data.identity;
+            state.gameMap = data.gameMap;
         },
+        updateGameObject(state, gameObject) {
+            state.gameObject = gameObject;
+        },
+        updateLoser(state, loser) {
+            state.loser = loser;
+        }
     },
     actions: {
 

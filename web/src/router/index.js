@@ -92,6 +92,7 @@ router.beforeEach((to, from, next) => {
       },
       error() {
         localStorage.removeItem('jwt_token');
+        store.commit('logout');
         alert("身份验证无效，请重新登录");
         router.push({ name: 'user_account_login' })
       }

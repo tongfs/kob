@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import GameMap from '@/components/GameMap.vue'
+import GameMap from './GameMap.vue';
 
 export default {
     components: {
