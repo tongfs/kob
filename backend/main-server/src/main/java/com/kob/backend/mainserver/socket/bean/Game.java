@@ -1,13 +1,18 @@
 package com.kob.backend.mainserver.socket.bean;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kob.backend.mainserver.mapper.BotMapper;
 import com.kob.backend.mainserver.mapper.UserMapper;
+import com.kob.backend.mainserver.pojo.Bot;
 import com.kob.backend.mainserver.pojo.Record;
 import com.kob.backend.mainserver.pojo.User;
 import com.kob.backend.mainserver.socket.WebSocketServer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -27,24 +32,29 @@ public class Game implements Runnable {
     private static final int COLS = 14;
     private static final int BLOCK_COUNT = 20;
     private static final int LOSER_1 = 1, LOSER_2 = 2, DRAW = 3;
-    private static final Map<Long, WebSocketServer> users = WebSocketServer.users;
+    private static final Map<Integer, WebSocketServer> users = WebSocketServer.users;
+    private static final String BOT_ADD_URL = "http://127.0.0.1:3002/pk/bot/add";
 
     private final int[][] gameMap;
     private final Player player1, player2;
     private Integer loser = 0;
 
-    public Game(long id1, long id2) {
+    public Game(int id1, int botId1, int id2, int botId2) {
         UserMapper userMapper = WebSocketServer.getUserMapper();
         User user1 = userMapper.selectById(id1);
         User user2 = userMapper.selectById(id2);
+
+        BotMapper botMapper = WebSocketServer.getBotMapper();
+        Bot bot1 = botMapper.selectById(botId1);
+        Bot bot2 = botMapper.selectById(botId2);
 
         // 构造地图
         gameMap = new int[ROWS][COLS];
         while (!createWalls(gameMap)) ;
 
         // 引入玩家
-        player1 = new Player(id1, ROWS - 2, 1, 1);
-        player2 = new Player(id2, 1, COLS - 2, 2);
+        player1 = new Player(id1, ROWS - 2, 1, 1, botId1, bot1 == null ? null : bot1.getContent());
+        player2 = new Player(id2, 1, COLS - 2, 2, botId2, bot2 == null ? null : bot2.getContent());
 
         // 开启线程
         new Thread(this).start();
@@ -56,6 +66,13 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
+        // 前端需要在有1000ms才进入游戏，后端在这里等待1100ms
+        try {
+            Thread.sleep(1100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // 进行游戏
         while (true) {
             if (nextStep()) {
@@ -145,9 +162,15 @@ public class Game implements Runnable {
             e.printStackTrace();
         }
 
-        // 间隔一段时间判断玩家是否都准备好了
+        if (player1.getBotId() != 0) {
+            sendBotCode(player1);
+        }
+        if (player2.getBotId() != 0) {
+            sendBotCode(player2);
+        }
+
+        // 5000ms内判断50次两名玩家是否都准备好走下一步
         for (int i = 0; i < 50; i++) {
-//        for (int i = 0; i < 50000; i++) {
             try {
                 Thread.sleep(100);
                 if (player1.getNextStep() != null && player2.getNextStep() != null) {
@@ -286,6 +309,35 @@ public class Game implements Runnable {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 将bot代码发给动态运行的代码的微服务
+     */
+    private void sendBotCode(Player player) {
+        RestTemplate restTemplate = WebSocketServer.getRestTemplate();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("userId", player.getId().toString());
+        map.add("botCode", player.getBotCode());
+        map.add("input", getInput(player.getId()));
+        restTemplate.postForObject(BOT_ADD_URL, map, String.class);
+    }
+
+    /**
+     * 将当前的局面信息编码为字符串
+     */
+    private String getInput(int userId) {
+        Player me, opponent;
+        if (player1.getId() == userId) {
+            me = player1;
+            opponent = player2;
+        } else {
+            me = player2;
+            opponent = player1;
+        }
+        return map2String() + '#' +
+                me.getX() + '#' + me.getY() + '#' + '(' + me.steps2String() + ')' + '#' +
+                opponent.getX() + '#' + opponent.getY() + '#' + '(' + opponent.steps2String() + ')';
     }
 
     @Data

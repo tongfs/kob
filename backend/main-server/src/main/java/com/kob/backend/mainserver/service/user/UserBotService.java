@@ -10,7 +10,7 @@ import java.util.Map;
  * @date 2022-08-21
  * @description
  */
-public interface BotService {
+public interface UserBotService {
     Map<String, String> add(Map<String, String> map);
 
     Map<String, String> remove(int botId);

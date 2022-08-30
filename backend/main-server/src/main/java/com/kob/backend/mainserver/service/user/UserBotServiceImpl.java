@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @Service
-public class BotServiceImpl implements BotService {
+public class UserBotServiceImpl implements UserBotService {
 
     @Autowired
     private BotMapper botMapper;

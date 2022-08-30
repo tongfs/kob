@@ -6,7 +6,7 @@ package com.kob.backend.matchsystem.service;
  * @description
  */
 public interface MatchService {
-    public String match(Integer userId, Integer rating);
+    public String match(int userId, int rating, int botId);
 
-    public String remove(Integer userId);
+    public String remove(int userId);
 }

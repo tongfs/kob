@@ -24,6 +24,8 @@ export default {
 
         let socket = null;
 
+        store.commit('updateLoser', 0);
+
         onMounted(() => {
             socket = new WebSocket(url);
             store.commit('updateOpponent', {
@@ -33,7 +35,7 @@ export default {
 
             socket.onopen = () => {
                 console.log('open');
-                store.commit('updateSocket', socket)
+                store.commit('updateSocket', socket);
             };
             socket.onmessage = msg => {
                 const data = JSON.parse(msg.data);

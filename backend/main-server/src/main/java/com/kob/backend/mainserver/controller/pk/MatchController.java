@@ -15,7 +15,7 @@ import java.util.Map;
  * @description
  */
 @RestController
-@RequestMapping("/pk")
+@RequestMapping("/pk/match")
 public class MatchController {
 
     @Autowired
@@ -24,7 +24,9 @@ public class MatchController {
     @PostMapping("/start")
     public void startGame(@RequestParam Map<String, String> map) {
         Integer id1 = new Integer(map.get("id1"));
+        Integer botId1 = new Integer(map.get("botId1"));
         Integer id2 = new Integer(map.get("id2"));
-        matchService.startGame(id1, id2);
+        Integer botId2 = new Integer(map.get("botId2"));
+        matchService.startGame(id1, botId1, id2, botId2);
     }
 }

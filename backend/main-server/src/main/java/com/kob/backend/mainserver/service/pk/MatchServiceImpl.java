@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchServiceImpl implements MatchService {
     @Override
-    public String startGame(long id1, long id2) {
-        System.out.println("start game " + id1 + " " + id2);
-        WebSocketServer.startGame(id1, id2);
+    public String startGame(int id1, int botId1, int id2, int botId2) {
+        System.out.println("start game " + id1 + " " + botId1 + " " + id2 + " " + botId2);
+        WebSocketServer.startGame(id1, botId1, id2, botId2);
         return "start game success";
     }
 }

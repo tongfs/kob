@@ -15,7 +15,7 @@ import java.util.Map;
  * @description
  */
 @RestController
-@RequestMapping("/match")
+@RequestMapping("/pk/match")
 public class MatchController {
 
     @Autowired
@@ -25,7 +25,8 @@ public class MatchController {
     public String match(@RequestParam Map<String, String> map) {
         int userId = new Integer(map.get("userId"));
         int rating = new Integer(map.get("rating"));
-        return matchService.match(userId, rating);
+        int botId = new Integer(map.get("botId"));
+        return matchService.match(userId, rating, botId);
     }
 
     @PostMapping("/remove")

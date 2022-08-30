@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 public class Player {
 
-    private Long id;
+    private Integer id;
 
     // 初始时的坐标
     private Integer x, y;
@@ -29,12 +29,18 @@ public class Player {
     // 玩家在地图中的位置
     private Integer identity;
 
-    public Player(long id, int x, int y, int identity) {
+    private Integer botId;
+
+    private String botCode;
+
+    public Player(int id, int x, int y, int identity, int botId, String botCode) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.identity = identity;
         this.steps = new ArrayList<>();
+        this.botId = botId;
+        this.botCode = botCode;
     }
 
     public void setNextStep(Integer nextStep) {

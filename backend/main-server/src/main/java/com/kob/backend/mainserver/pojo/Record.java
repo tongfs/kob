@@ -21,13 +21,13 @@ import java.util.Date;
 public class Record {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long aId;
+    private Integer aId;
 
     private Integer aX, aY;
 
-    private Long bId;
+    private Integer bId;
 
     private Integer bX, bY;
 

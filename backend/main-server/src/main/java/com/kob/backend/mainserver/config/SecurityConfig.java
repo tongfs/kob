@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/account/token", "/user/account/register").permitAll()
-                .antMatchers("/pk/start").hasIpAddress("127.0.0.1")
+                .antMatchers("/pk/match/start", "/pk/bot/next").hasIpAddress("127.0.0.1")
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 

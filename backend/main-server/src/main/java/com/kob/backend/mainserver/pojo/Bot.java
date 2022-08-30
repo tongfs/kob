@@ -19,9 +19,9 @@ import java.util.Date;
 public class Bot {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long userId;
+    private Integer userId;
 
     private String title;
 

@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class MatchPool implements Runnable {
 
-    private static final String START_GAME_URL = "http://127.0.0.1:3000/pk/start";
+    private static final String START_GAME_URL = "http://127.0.0.1:3000/pk/match/start";
 
     private List<Player> players = new ArrayList<>();
 
@@ -30,11 +30,11 @@ public class MatchPool implements Runnable {
         new Thread(this).start();
     }
 
-    public synchronized void addPlayer(long userId, Integer rating) {
-        players.add(new Player(userId, rating));
+    public synchronized void addPlayer(int userId, int rating, int botId) {
+        players.add(new Player(userId, rating, botId));
     }
 
-    public synchronized void removePlayer(long userId) {
+    public synchronized void removePlayer(int userId) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getUserId() == userId) {
                 players.remove(i);
@@ -100,7 +100,9 @@ public class MatchPool implements Runnable {
     private void sendResult(Player player1, Player player2) {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("id1", player1.getUserId().toString());
+        map.add("botId1", player1.getBotId().toString());
         map.add("id2", player2.getUserId().toString());
+        map.add("botId2", player2.getBotId().toString());
         restTemplate.postForObject(START_GAME_URL, map, String.class);
     }
 
@@ -108,6 +110,7 @@ public class MatchPool implements Runnable {
     public void run() {
         while (true) {
             try {
+                // 每秒匹配一次
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -122,13 +125,15 @@ public class MatchPool implements Runnable {
 
     @Data
     static class Player {
-        private Long userId;
+        private Integer userId;
         private Integer rating;
+        private Integer botId;
         private Long waitingTime;
 
-        public Player(Long userId, Integer rating) {
+        public Player(Integer userId, Integer rating, Integer botId) {
             this.userId = userId;
             this.rating = rating;
+            this.botId = botId;
             this.waitingTime = 0L;
         }
     }

@@ -16,14 +16,14 @@ public class MatchServiceImpl implements MatchService {
     private MatchPool matchPool;
 
     @Override
-    public String match(Integer userId, Integer rating) {
-        System.out.println("add player: " + userId + " " + rating);
-        matchPool.addPlayer(userId, rating);
+    public String match(int userId, int rating, int botId) {
+        System.out.println("add player: " + userId + " " + rating + " " + botId);
+        matchPool.addPlayer(userId, rating, botId);
         return "add player success";
     }
 
     @Override
-    public String remove(Integer userId) {
+    public String remove(int userId) {
         System.out.println("remove player: " + userId );
         matchPool.removePlayer(userId);
         return "remove player success";

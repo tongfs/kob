@@ -1,7 +1,7 @@
 package com.kob.backend.mainserver.controller.user;
 
 import com.kob.backend.mainserver.pojo.Bot;
-import com.kob.backend.mainserver.service.user.BotService;
+import com.kob.backend.mainserver.service.user.UserBotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,29 +16,29 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user/bot")
-public class BotController {
+public class UserBotController {
 
     @Autowired
-    private BotService botService;
+    private UserBotService userBotService;
 
     @PostMapping("/add")
     public Map<String, String> add(@RequestParam Map<String, String> map) {
         System.out.println(map);
-        return botService.add(map);
+        return userBotService.add(map);
     }
 
     @PostMapping("/remove")
     public Map<String, String> remove(@RequestParam Integer botId) {
-        return botService.remove(botId);
+        return userBotService.remove(botId);
     }
 
     @PostMapping("/update")
     public Map<String, String> update(@RequestParam Map<String, String> map) {
-        return botService.update(map);
+        return userBotService.update(map);
     }
 
     @GetMapping("/all")
     public List<Bot> all() {
-        return botService.all();
+        return userBotService.all();
     }
 }

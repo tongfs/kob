@@ -19,11 +19,11 @@ public class AuthenticationUtil {
         return userDetails.getUser();
     }
 
-    public static long getUserId(String token) {
-        long userId;
+    public static int getUserId(String token) {
+        int userId;
         try {
             Claims claims = JwtUtil.parseJWT(token);
-            userId = new Long(claims.getSubject());
+            userId = new Integer(claims.getSubject());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -6,5 +6,5 @@ package com.kob.backend.mainserver.service.pk;
  * @description
  */
 public interface MatchService {
-    String startGame(long id1, long id2);
+    String startGame(int id1, int botId1, int id2, int botId2);
 }

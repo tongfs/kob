@@ -12,5 +12,6 @@
     <modules>
         <module>main-server</module>
         <module>match-system</module>
+        <module>bot-running-system</module>
     </modules>
 </project>

@@ -1,6 +1,7 @@
 package com.kob.backend.mainserver.socket;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kob.backend.mainserver.mapper.BotMapper;
 import com.kob.backend.mainserver.mapper.RecordMapper;
 import com.kob.backend.mainserver.mapper.UserMapper;
 import com.kob.backend.mainserver.pojo.User;
@@ -32,12 +33,13 @@ public class WebSocketServer {
     private static UserMapper userMapper;
     private static RecordMapper recordMapper;
     private static RestTemplate restTemplate;
+    private static BotMapper botMapper;
 
     // 存放所有的 userId 和 socket 之间的映射关系
-    public static final Map<Long, WebSocketServer> users = new ConcurrentHashMap<>();
+    public static final Map<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
 
-    private static final String ADD_PLAYER_URL = "http://127.0.0.1:3001/match/add";
-    private static final String REMOVE_PLAYER_URL = "http://127.0.0.1:3001/match/remove";
+    private static final String ADD_PLAYER_URL = "http://127.0.0.1:3001/pk/match/add";
+    private static final String REMOVE_PLAYER_URL = "http://127.0.0.1:3001/pk/match/remove";
 
     private User user;
     private Session session = null;
@@ -54,15 +56,29 @@ public class WebSocketServer {
     }
 
     @Autowired
-    public void setRestTemplate(RestTemplate restTemplate) {
+    private void setRestTemplate(RestTemplate restTemplate) {
         WebSocketServer.restTemplate = restTemplate;
+    }
+
+    @Autowired
+    private void setBotMapper(BotMapper botMapper) {
+        WebSocketServer.botMapper = botMapper;
     }
 
     public static RecordMapper getRecordMapper() {
         return recordMapper;
     }
+
     public static UserMapper getUserMapper() {
         return userMapper;
+    }
+
+    public static BotMapper getBotMapper() {
+        return botMapper;
+    }
+
+    public static RestTemplate getRestTemplate() {
+        return restTemplate;
     }
 
     public User getUser() {
@@ -74,7 +90,7 @@ public class WebSocketServer {
     public void onOpen(Session session, @PathParam("token") String token) throws IOException {
         this.session = session;
         System.out.println("open");
-        Long userId = AuthenticationUtil.getUserId(token);
+        int userId = AuthenticationUtil.getUserId(token);
         user = userMapper.selectById(userId);
 
         if (user == null) {
@@ -90,6 +106,7 @@ public class WebSocketServer {
         System.out.println("close");
         if (user != null) {
             users.remove(user.getId());
+            stopMatching();
         }
     }
 
@@ -102,7 +119,7 @@ public class WebSocketServer {
         System.out.println(event);
 
         if ("matching".equals(event)) {
-            startMatching();
+            startMatching(data.getLong("botId"));
         } else if ("cancel".equals(event)) {
             stopMatching();
         } else if ("move".equals(event)) {
@@ -123,18 +140,19 @@ public class WebSocketServer {
         }
     }
 
-    private void startMatching() {
+    private void startMatching(Long botId) {
         System.out.println("start matching");
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 
         map.add("userId", user.getId().toString());
         map.add("rating", user.getRating().toString());
+        map.add("botId", botId.toString());
 
         restTemplate.postForObject(ADD_PLAYER_URL, map, String.class);
     }
 
-    public static void startGame(long id1, long id2) {
-        Game game = new Game(id1, id2);
+    public static void startGame(int id1, int botId1, int id2, int botId2) {
+        Game game = new Game(id1, botId1, id2, botId2);
         if (users.get(id1) != null) {
             users.get(id1).game = game;
         }
@@ -150,12 +168,37 @@ public class WebSocketServer {
         restTemplate.postForObject(REMOVE_PLAYER_URL, map, String.class);
     }
 
+    /**
+     * 命令来自于玩家键盘操作
+     */
     private void move(int direction) {
+        // TODO 可以将这部分逻辑封装到Game里；并且和下面的方法在一定程度上整合
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
-        if (player1.getId().equals(user.getId())) {
+
+        Integer userId = user.getId();
+        if (player1.getId().equals(userId)) {
+            if (player1.getBotId() == 0) {
+                player1.setNextStep(direction);
+            }
+        } else if (player2.getId().equals(userId)) {
+            if (player2.getBotId() == 0) {
+                player2.setNextStep(direction);
+            }
+        }
+    }
+
+    /**
+     * 命令来自于bot代码的返回值
+     */
+    public static void botSetNextStep(int userId, int direction) {
+        Game game = users.get(userId).game;
+        Player player1 = game.getPlayer1();
+        Player player2 = game.getPlayer2();
+
+        if (player1.getId().equals(userId)) {
             player1.setNextStep(direction);
-        } else if (player2.getId().equals(user.getId())) {
+        } else if (player2.getId().equals(userId)) {
             player2.setNextStep(direction);
         }
     }
