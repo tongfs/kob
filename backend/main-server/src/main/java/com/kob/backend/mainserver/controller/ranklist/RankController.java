@@ -16,7 +16,7 @@ import java.util.Map;
  * @description
  */
 @RestController
-@RequestMapping("/rank")
+@RequestMapping("/api/rank")
 public class RankController {
 
     @Autowired

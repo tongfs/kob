@@ -15,7 +15,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("/user/bot")
+@RequestMapping("/api/user/bot")
 public class UserBotController {
 
     @Autowired

@@ -23,7 +23,7 @@ public class RankServiceImpl implements RankService {
 
     @Override
     public JSONObject getRankList(int page) {
-        Page<User> userPage = new Page<>(page, 3);
+        Page<User> userPage = new Page<>(page, 10);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("rating");
 

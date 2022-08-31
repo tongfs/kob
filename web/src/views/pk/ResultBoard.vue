@@ -7,7 +7,7 @@
             Loser
         </div>
         <div class="result-board-text" v-else>
-            Win
+            Winner
         </div>
         <div class="col-12 result-board-btn">
             <button type="button" class="btn btn-warning btn-lg" @click="restart">确定</button>

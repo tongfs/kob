@@ -69,7 +69,7 @@ export default {
         const pull_page = page => {
             current_page = page;
             $.ajax({
-                url: 'http://localhost:3000/record/list',
+                url: 'https://app2585.acapp.acwing.com.cn/api/record/list',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,

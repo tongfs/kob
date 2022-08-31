@@ -148,7 +148,7 @@ export default {
 
         const refresh_bots = () => {
             $.ajax({
-                url: 'http://localhost:3000/user/bot/all',
+                url: 'https://app2585.acapp.acwing.com.cn/api/user/bot/all',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,
@@ -164,7 +164,7 @@ export default {
 
         const add_bot = () => {
             $.ajax({
-                url: 'http://localhost:3000/user/bot/add',
+                url: 'https://app2585.acapp.acwing.com.cn/api/user/bot/add',
                 type: 'post',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,
@@ -190,7 +190,7 @@ export default {
 
         const remove_bot = (bot) => {
             $.ajax({
-                url: 'http://localhost:3000/user/bot/remove',
+                url: 'https://app2585.acapp.acwing.com.cn/api/user/bot/remove',
                 type: 'post',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,
@@ -208,7 +208,7 @@ export default {
 
         const update_bot = (bot) => {
             $.ajax({
-                url: 'http://localhost:3000/user/bot/update',
+                url: 'https://app2585.acapp.acwing.com.cn/api/user/bot/update',
                 type: 'post',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,

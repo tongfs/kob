@@ -1,5 +1,6 @@
 import { AcGameObject } from "./AcGameObject";
 import { Cell } from "./Cell";
+import { useStore } from "vuex";
 
 export class Snake extends AcGameObject {
     constructor(info, gameMap) {
@@ -25,6 +26,15 @@ export class Snake extends AcGameObject {
         this.eye_direction = this.id === 0 ? 0 : 2;
         this.eye_dx = [[-1, 1], [1, 1], [1, -1], [-1, -1]];
         this.eye_dy = [[-1, -1], [-1, 1], [1, 1], [1, -1]];
+
+        this.factor = 0.9;
+        this.store = useStore();
+        if (!this.store.state.record.isRecord) {
+            this.factor = 0.7;
+            if (this.id + 1 === this.store.state.pk.identity) {
+                this.factor = 0.90;
+            }
+        }
     }
 
     start() {}
@@ -36,7 +46,7 @@ export class Snake extends AcGameObject {
     }
 
     render() {
-        const factor = 0.9;
+        const factor = this.factor;
         const L = this.gameMap.L;
         const ctx = this.gameMap.ctx;
 

@@ -16,7 +16,7 @@ import java.util.Map;
  * @description
  */
 @RestController
-@RequestMapping("/record")
+@RequestMapping("/api/record")
 public class RecordController {
 
     @Autowired

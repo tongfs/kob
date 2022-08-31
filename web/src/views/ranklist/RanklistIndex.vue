@@ -3,12 +3,16 @@
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
+                    <th>排名</th>
                     <th>玩家</th>
                     <th>天梯分</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="user in users" :key="user.id">
+                    <td>
+                        <span>{{ ++ranking }}</span>
+                    </td>
                     <td>
                         <img class="user-profile" :src="user.profile" alt="头像" />
                         &nbsp;
@@ -53,12 +57,13 @@ export default {
         let users = ref([]);
         let total = 0;
         let pages = ref([]);
-        const page_num = 3;
+        let ranking = 0;
+        const page_num = 10;
 
         const pull_page = page => {
             current_page = page;
             $.ajax({
-                url: 'http://localhost:3000/rank/list',
+                url: 'https://app2585.acapp.acwing.com.cn/api/rank/list',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,
@@ -108,6 +113,7 @@ export default {
             users,
             pages,
             click_page,
+            ranking,
         }
     }
 }

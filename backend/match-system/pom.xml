@@ -13,6 +13,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>match-system</name>
     <description>match-system</description>
+    <packaging>jar</packaging>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -47,14 +49,17 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--这里写上main方法所在类的路径-->
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <mainClass>com.kob.backend.matchsystem.MatchSystemApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
