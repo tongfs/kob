@@ -25,6 +25,7 @@ export default {
         let socket = null;
 
         store.commit('updateLoser', 0);
+        store.commit('updateIsRecord', false);
 
         onMounted(() => {
             socket = new WebSocket(url);

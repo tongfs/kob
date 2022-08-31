@@ -55,24 +55,47 @@ export class GameMap extends AcGameObject {
     }
 
     add_listening_events() {
-        // 聚焦到画布上
-        this.ctx.canvas.focus();
+        if (this.store.state.record.isRecord) {
+            let k = 0;
+            const steps1 = this.store.state.record.steps1;
+            const steps2 = this.store.state.record.steps2;
+            const loser = this.store.state.record.recordLoser;
+            const [snake0, snake1] = this.snakes;
+            const intervalId = setInterval(() => {
+                if (k >= steps1.length - 1) {
+                    if (loser === 1 || loser === 3) {
+                        snake0.die();
+                    }
+                    if (loser === 2 || loser === 3) {
+                        snake1.die();
+                    }
+                    clearInterval(intervalId);
+                } else {
+                    snake0.set_direction(parseInt(steps1[k]));
+                    snake1.set_direction(parseInt(steps2[k]));
+                    k++;
+                }
+            }, 500);
+        } else {
+            // 聚焦到画布上
+            this.ctx.canvas.focus();
 
-        // 监听按键
-        this.ctx.canvas.addEventListener('keydown', e => {
-            let d = -1;
-            if (e.key === 'w' || e.key === 'ArrowUp') d = 0;
-            else if (e.key === 'd' || e.key === 'ArrowRight') d = 1;
-            else if (e.key === 's' || e.key === 'ArrowDown') d = 2;
-            else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
+            // 监听按键
+            this.ctx.canvas.addEventListener('keydown', e => {
+                let d = -1;
+                if (e.key === 'w' || e.key === 'ArrowUp') d = 0;
+                else if (e.key === 'd' || e.key === 'ArrowRight') d = 1;
+                else if (e.key === 's' || e.key === 'ArrowDown') d = 2;
+                else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
 
-            if (d >= 0) {
-                this.store.state.pk.socket.send(JSON.stringify({
-                    event: 'move',
-                    direction: d,
-                }));
-            }
-        });
+                if (d >= 0) {
+                    this.store.state.pk.socket.send(JSON.stringify({
+                        event: 'move',
+                        direction: d,
+                    }));
+                }
+            });
+        }
     }
 
     create_walls() {

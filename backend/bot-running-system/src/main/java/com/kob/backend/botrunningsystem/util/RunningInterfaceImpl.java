@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * @author tfs
  * @date 2022-08-30
- * @description
+ * @description bot运行的代码模板，其中报名和类名不能更改
  */
 public class RunningInterfaceImpl implements com.kob.backend.botrunningsystem.util.RunningInterface {
     private static final int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};

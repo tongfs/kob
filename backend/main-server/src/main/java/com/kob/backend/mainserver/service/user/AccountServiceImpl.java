@@ -101,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         String encodedPassword = passwordEncoder.encode(password);
-        String profile = "https://cdn.acwing.com/media/user/profile/photo/72099_lg_2da8718010.jpg";
+        String profile = "https://pic3.zhimg.com/v2-c1b0fcddf7841b576549da07c41cbe8a_r.jpg";
 
         User user = new User(null, username, encodedPassword, profile, null);
         userMapper.insert(user);

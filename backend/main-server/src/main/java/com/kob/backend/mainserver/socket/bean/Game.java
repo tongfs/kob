@@ -37,12 +37,13 @@ public class Game implements Runnable {
 
     private final int[][] gameMap;
     private final Player player1, player2;
+    private final UserMapper userMapper = WebSocketServer.getUserMapper();
+    private final User user1, user2;
     private Integer loser = 0;
 
     public Game(int id1, int botId1, int id2, int botId2) {
-        UserMapper userMapper = WebSocketServer.getUserMapper();
-        User user1 = userMapper.selectById(id1);
-        User user2 = userMapper.selectById(id2);
+        user1 = userMapper.selectById(id1);
+        user2 = userMapper.selectById(id2);
 
         BotMapper botMapper = WebSocketServer.getBotMapper();
         Bot bot1 = botMapper.selectById(botId1);
@@ -193,6 +194,9 @@ public class Game implements Runnable {
         // 在这之前先保存游戏结果
         saveResult();
 
+        // 更新天梯分
+        updateRating();
+
         JSONObject resp = new JSONObject();
         setEvent(resp, "result");
         resp.put("loser", loser);
@@ -338,6 +342,25 @@ public class Game implements Runnable {
         return map2String() + '#' +
                 me.getX() + '#' + me.getY() + '#' + '(' + me.steps2String() + ')' + '#' +
                 opponent.getX() + '#' + opponent.getY() + '#' + '(' + opponent.steps2String() + ')';
+    }
+
+    /**
+     * 更新天梯积分
+     */
+    private void updateRating() {
+        UserMapper userMapper = WebSocketServer.getUserMapper();
+        if (loser == 1) {
+            user1.setRating(user1.getRating() - 3);
+            user2.setRating(user2.getRating() + 5);
+        } else if (loser == 2) {
+            user1.setRating(user1.getRating() + 5);
+            user2.setRating(user2.getRating() - 3);
+        } else if (loser == 3) {
+            user1.setRating(user1.getRating() - 2);
+            user2.setRating(user2.getRating() - 2);
+        }
+        userMapper.updateById(user1);
+        userMapper.updateById(user2);
     }
 
     @Data
