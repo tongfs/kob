@@ -171,7 +171,7 @@ public class Game implements Runnable {
         }
 
         // 5000ms内判断50次两名玩家是否都准备好走下一步
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(100);
                 if (player1.getNextStep() != null && player2.getNextStep() != null) {

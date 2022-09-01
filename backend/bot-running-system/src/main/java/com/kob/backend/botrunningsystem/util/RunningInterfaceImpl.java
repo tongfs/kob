@@ -1,20 +1,22 @@
 package com.kob.backend.botrunningsystem.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * @author tfs
  * @date 2022-08-30
- * @description bot运行的代码模板，其中报名和类名不能更改
+ * @description bot运行的代码模板，其中包名和类名不能更改
  */
-public class RunningInterfaceImpl implements com.kob.backend.botrunningsystem.util.RunningInterface {
+public class RunningInterfaceImpl implements java.util.function.Supplier<Integer> {
     private static final int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};
     private static final int ROWS = 13;
     private static final int COLS = 14;
 
-    @Override
     public int getNextStep(String input) {
         String[] split = input.split("#");
         int[][] g = new int[ROWS][COLS];
@@ -85,6 +87,17 @@ public class RunningInterfaceImpl implements com.kob.backend.botrunningsystem.ut
         }
 
         return body;
+    }
+
+    @Override
+    public Integer get() {
+        File file = new File("input.txt");
+        try {
+            Scanner sc = new Scanner(file);
+            return getNextStep(sc.next());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

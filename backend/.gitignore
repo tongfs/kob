@@ -22,3 +22,5 @@ target/
 .mvn/
 mvnw
 mvnw.cmd
+
+input.txt

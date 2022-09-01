@@ -1,6 +1,5 @@
 package com.kob.backend.botrunningsystem.service.util;
 
-import com.kob.backend.botrunningsystem.util.RunningInterface;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.joor.Reflect;
@@ -10,7 +9,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * @author tfs
@@ -48,15 +51,24 @@ public class Consumer implements Runnable {
     public void run() {
         String uuid = UUID.randomUUID().toString().substring(0, 8);
         String botCode = bot.getBotCode();
-        int i = botCode.indexOf(" implements com.kob.backend.botrunningsystem.util.RunningInterface");
+        int i = botCode.indexOf(" implements java.util.function.Supplier<Integer>");
         botCode = botCode.substring(0, i) + uuid + botCode.substring(i);
 
-        RunningInterface runningInterface = Reflect
+        Supplier<Integer> runningInterface = Reflect
                 .compile("com.kob.backend.botrunningsystem.util.RunningInterfaceImpl" + uuid, botCode)
                 .create()
                 .get();
 
-        int nextStep = runningInterface.getNextStep(bot.getInput());
+        File file = new File("input.txt");
+        try {
+            PrintWriter writer = new PrintWriter(file);
+            writer.println(bot.getInput());
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        int nextStep = runningInterface.get();
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("userId", bot.getUserId().toString());
