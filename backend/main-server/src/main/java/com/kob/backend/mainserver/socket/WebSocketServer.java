@@ -158,6 +158,8 @@ public class WebSocketServer {
         }
         if (users.get(id2) != null) {
             users.get(id2).game = game;
+        } else if (id2 < 0) {
+            Game.robotGameHashMap.put(id2, game);
         }
     }
 
@@ -192,7 +194,12 @@ public class WebSocketServer {
      * 命令来自于bot代码的返回值
      */
     public static void botSetNextStep(int userId, int direction) {
-        Game game = users.get(userId).game;
+        Game game;
+        if (userId < 0) {
+            game = Game.robotGameHashMap.get(userId);
+        } else {
+            game = users.get(userId).game;
+        }
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
 

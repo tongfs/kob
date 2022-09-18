@@ -49,7 +49,7 @@ public class Record {
         this.aId = player1.getId();
         this.aX = player1.getX();
         this.aY = player1.getY();
-        this.bId = player2.getId();
+        this.bId = player2.getId() < 0 ? -1 : player2.getId();
         this.bX = player2.getX();
         this.bY = player2.getY();
         this.aSteps = player1.steps2String();

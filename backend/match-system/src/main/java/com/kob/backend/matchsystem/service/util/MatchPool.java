@@ -19,6 +19,7 @@ import java.util.List;
 public class MatchPool implements Runnable {
 
     private static final String START_GAME_URL = "http://127.0.0.1:3000/pk/match/start";
+    private static int robotCnt = -1;
 
     private List<Player> players = new ArrayList<>();
 
@@ -63,9 +64,18 @@ public class MatchPool implements Runnable {
 
         for (int i = 0; i < n; i++) {
             if (used[i]) continue;
+            Player player1 = players.get(i);
+
+            // 如果匹配了15秒还没有匹配到对手，系统会匹配一个机器人与其对战
+            if (player1.waitingTime == 15) {
+                used[i] = true;
+                Player player2 = new Player(robotCnt--, null, -1);
+                sendResult(player1, player2);
+                continue;
+            }
+
             for (int j = i + 1; j < n; j++) {
                 if (used[j]) continue;
-                Player player1 = players.get(i);
                 Player player2 = players.get(j);
                 if (checkMatched(player1, player2)) {
                     used[i] = used[j] = true;

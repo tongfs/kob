@@ -14,6 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -35,15 +36,22 @@ public class Game implements Runnable {
     private static final Map<Integer, WebSocketServer> users = WebSocketServer.users;
     private static final String BOT_ADD_URL = "http://127.0.0.1:3002/pk/bot/add";
 
+    // 存放机器人对应的game
+    public static Map<Integer, Game> robotGameHashMap = new HashMap<>();
+
     private final int[][] gameMap;
     private final Player player1, player2;
     private final UserMapper userMapper = WebSocketServer.getUserMapper();
-    private final User user1, user2;
+    private User user1, user2;
     private Integer loser = 0;
 
     public Game(int id1, int botId1, int id2, int botId2) {
         user1 = userMapper.selectById(id1);
-        user2 = userMapper.selectById(id2);
+        if (id2 < 0) {
+            user2 = userMapper.selectById(-1);
+        } else {
+            user2 = userMapper.selectById(id2);
+        }
 
         BotMapper botMapper = WebSocketServer.getBotMapper();
         Bot bot1 = botMapper.selectById(botId1);
@@ -349,6 +357,9 @@ public class Game implements Runnable {
      */
     private void updateRating() {
         UserMapper userMapper = WebSocketServer.getUserMapper();
+        if (player2.getId() < 0) {
+            user2 = userMapper.selectById(-1);
+        }
         if (loser == 1) {
             user1.setRating(user1.getRating() - 3);
             user2.setRating(user2.getRating() + 5);
