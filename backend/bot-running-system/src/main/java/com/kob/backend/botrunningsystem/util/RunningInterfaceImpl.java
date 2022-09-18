@@ -41,27 +41,43 @@ public class RunningInterfaceImpl implements java.util.function.Supplier<Integer
             g[cell.x][cell.y] = 1;
         }
 
-        int[] directions = new int[4];
-        int cnt = 0;
+        int[] directions = new int[4];  // -1表示该方向不可走，非负表示选择该方向后下一步还有几个位置可走(0~3)
+        int maxDirections = -1;  // 下下一步最多有几个位置可走
         for (int i = 0; i < 4; i++) {
             Cell head = body1.get(body1.size() - 1);
             int a = head.x + dx[i];
             int b = head.y + dy[i];
             if (a >= 0 && a < ROWS && b >= 0 && b < COLS && g[a][b] == 0) {
-                cnt++;
-                directions[i] = 1;
+                directions[i] = explore(a, b, g);
+            } else {
+                directions[i] = -1;
             }
+            maxDirections = Math.max(maxDirections, directions[i]);
         }
 
-        if (cnt == 0) return 0;
+        if (maxDirections == -1) return 0;
 
         Random random = new Random();
         while (true) {
             int d = random.nextInt(4);
-            if (directions[d] == 1) {
+            if (directions[d] == maxDirections) {
                 return d;
             }
         }
+    }
+
+    /**
+     * 探索一下如果下一步走 (x, y)，则再下一步有多少个可选位置，将结果记录在
+     */
+    private int explore(int x, int y, int[][] g) {
+        int res = 0;
+        for (int i = 0; i < 4; i++) {
+            int a = x + dx[i], b = y + dy[i];
+            if (a >= 0 && a < ROWS && b >= 0 && b < COLS && g[a][b] == 0) {
+                res++;
+            }
+        }
+        return res;
     }
 
     private boolean isIncreasing(int turn) {
