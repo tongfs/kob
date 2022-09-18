@@ -32,7 +32,7 @@ export default {
     actions: {
         login(context, data) {
             $.ajax({
-                url: 'https://app2585.acapp.acwing.com.cn/api/user/account/token',
+                url: 'http://124.70.17.77:3000/api/user/account/token',
                 type: 'post',
                 data: {
                     username: data.username,
@@ -55,7 +55,7 @@ export default {
 
         getInfo(context, data) {
             $.ajax({
-                url: 'https://app2585.acapp.acwing.com.cn/api/user/account/info',
+                url: 'http://124.70.17.77:3000/api/user/account/info',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + context.state.token

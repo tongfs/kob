@@ -63,7 +63,7 @@ export default {
         const pull_page = page => {
             current_page = page;
             $.ajax({
-                url: 'https://app2585.acapp.acwing.com.cn/api/rank/list',
+                url: 'http://124.70.17.77:3000/api/rank/list',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + store.state.user.token,

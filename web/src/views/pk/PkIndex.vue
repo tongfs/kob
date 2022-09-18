@@ -20,7 +20,7 @@ export default {
     
     setup() {
         const store = useStore();
-        const url = `wss://app2585.acapp.acwing.com.cn/websocket/${store.state.user.token}`;
+        const url = `ws://124.70.17.77:3000/websocket/${store.state.user.token}`;
 
         let socket = null;
 
