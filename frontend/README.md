@@ -1,4 +1,4 @@
-# acapp
+# frontend
 
 ## Project setup
 ```
