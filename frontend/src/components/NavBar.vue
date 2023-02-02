@@ -17,11 +17,11 @@
                             :to="{ name: 'ranklist_index' }">排行榜</router-link>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
+                <ul class="navbar-nav" v-if="$store.state.user.is_login">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            tongfs
+                            {{ $store.state.user.username }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li>
@@ -30,8 +30,20 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">退出</a></li>
+                            <li><a class="dropdown-item" href="#" @click="logout">退出</a></li>
                         </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav" v-else>
+                    <li class="nav-item">
+                        <router-link class="nav-link" :to="{name: 'user_login'}" role="button">
+                            登录
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link" :to="{name: 'user_register'}" role="button">
+                            注册
+                        </router-link>
                     </li>
                 </ul>
             </div>
@@ -42,13 +54,25 @@
 <script>
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import { useStore } from 'vuex';
+import router from '@/router';
+
 
 export default {
     setup() {
         const route = useRoute();
-        let route_name = computed(() => route.name)
+        let route_name = computed(() => route.name);
+
+        const store = useStore();
+        const logout = () => {
+            store.dispatch('logout');
+            alert("您已退出登录")
+            router.push({ name: 'home' })
+        };
+
         return {
-            route_name
+            route_name,
+            logout
         }
     }
 }
