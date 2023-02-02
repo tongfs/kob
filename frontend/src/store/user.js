@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import store from './index'
 
 export default {
     state: {
@@ -31,7 +32,7 @@ export default {
     actions: {
         login(context, data) {
             $.ajax({
-                url: 'http://localhost:3000/user/login',
+                url: store.state.url + '/user/login',
                 type: 'post',
                 contentType: 'application/json;charset=UTF-8',
                 data: JSON.stringify({
@@ -55,7 +56,7 @@ export default {
 
         getInfo(context, data) {
             $.ajax({
-                url: 'http://localhost:3000/user/info',
+                url: store.state.url + '/user/info',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + context.state.token

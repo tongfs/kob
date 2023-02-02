@@ -4,7 +4,7 @@ import HomeIndex from '@/views/HomeIndex'
 import PkIndex from '@/views/PkIndex'
 import RecordIndex from '@/views/RecordIndex'
 import RanklistIndex from '@/views/RanklistIndex'
-import UserBotIndex from '@/views/UserBotIndex'
+import UserSpace from '@/views/UserSpace'
 import UserLogin from '@/views/UserLogin'
 import UserRegister from '@/views/UserRegister'
 import NotFound from '@/views/NotFound'
@@ -45,9 +45,9 @@ const routes = [
     }
   },
   {
-    path: '/user/bot',
-    name: 'user_bot_index',
-    component: UserBotIndex,
+    path: '/user/space',
+    name: 'user_space',
+    component: UserSpace,
     meta: {
       requireAuth: true,
     }

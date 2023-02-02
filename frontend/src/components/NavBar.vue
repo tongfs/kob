@@ -59,9 +59,9 @@
               <li>
                 <router-link
                   class="dropdown-item"
-                  :to="{ name: 'user_bot_index' }"
+                  :to="{ name: 'user_space' }"
                 >
-                  我的Bot
+                  个人中心
                 </router-link>
               </li>
               <li>

@@ -62,6 +62,8 @@ import ContentField from '@/components/ContentField.vue'
 import { ref } from 'vue';
 import router from '@/router/index';
 import $ from 'jquery';
+import { useStore } from 'vuex';
+
 
 export default {
     components: {
@@ -72,9 +74,10 @@ export default {
         let password = ref('');
         let confirmedPassword = ref('');
         let msg = ref('');
+        const store = useStore();
         const register = () => {
             $.ajax({
-                url: 'http://localhost:3000/user/register',
+                url: store.state.url + '/user/register',
                 type: 'post',
                 contentType: 'application/json;charset=UTF-8',
                 data: JSON.stringify({

@@ -15,28 +15,28 @@ import { ref, onMounted } from 'vue';
 import { GameMap } from "@/assets/scripts/GameMap";
 
 export default {
-    setup() {
-        let canvas = ref(null);
-        let parent = ref(null);
+  setup() {
+    let canvas = ref(null);
+    let parent = ref(null);
 
-        onMounted(() => {
-            new GameMap(canvas.value.getContext('2d'), parent.value)
-        });
+    onMounted(() => {
+      new GameMap(canvas.value.getContext('2d'), parent.value)
+    });
 
-        return {
-            canvas,
-            parent
-        }
+    return {
+      canvas,
+      parent
     }
+  }
 }
 </script>
 
 <style scoped>
 div.gamemap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
