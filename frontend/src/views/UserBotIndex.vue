@@ -1,7 +1,7 @@
 <template>
-    <ContentField>
-        我的Bot
-    </ContentField>
+  <ContentField>
+    我的Bot
+  </ContentField>
 </template>
 
 <script>

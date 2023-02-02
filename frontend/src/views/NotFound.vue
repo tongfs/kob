@@ -1,7 +1,7 @@
 <template>
-    <ContentField>
-        404 Not Found
-    </ContentField>
+  <ContentField>
+    404 Not Found
+  </ContentField>
 </template>
 
 <script>
@@ -14,4 +14,6 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

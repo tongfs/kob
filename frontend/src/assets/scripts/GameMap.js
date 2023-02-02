@@ -104,7 +104,7 @@ export class GameMap extends AcGameObject {
         }
 
         // 创建随机障碍物
-        for (let cnt = 0; cnt < this.blocks_count; ) {
+        for (let cnt = 0; cnt < this.blocks_count;) {
             let r = parseInt(Math.random() * this.rows);
             let c = parseInt(Math.random() * this.cols);
 
@@ -114,7 +114,7 @@ export class GameMap extends AcGameObject {
             g[r][c] = g[this.rows - r - 1][this.cols - c - 1] = true;
 
             if (r == this.rows - r - 1 && c == this.cols - c - 1) cnt += 1;
-            else cnt +=2;
+            else cnt += 2;
         }
 
         const copy_g = JSON.parse(JSON.stringify(g));

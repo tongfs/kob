@@ -15,17 +15,17 @@ export default {
             state.id = user.id;
             state.username = user.username;
             state.avatar = user.avatar;
-            state.is_login = user.is_login
+            state.is_login = user.is_login;
         },
         updateToken(state, token) {
-            state.token = token
+            state.token = token;
         },
         logout(state) {
-            state.id = '',
-            state.username = '',
-            state.avatar = '',
-            state.token = '',
-            state.is_login = false
+            state.id = '';
+            state.username = '';
+            state.avatar = '';
+            state.token = '';
+            state.is_login = false;
         }
     },
     actions: {
@@ -33,7 +33,7 @@ export default {
             $.ajax({
                 url: 'http://localhost:3000/user/login',
                 type: 'post',
-                contentType : 'application/json;charset=UTF-8',
+                contentType: 'application/json;charset=UTF-8',
                 data: JSON.stringify({
                     username: data.username,
                     password: data.password
@@ -86,4 +86,4 @@ export default {
     },
     modules: {
     }
-  }
+}

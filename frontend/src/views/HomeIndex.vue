@@ -1,7 +1,7 @@
 <template>
-    <ContentField>
-        主页
-    </ContentField>
+  <ContentField>
+    主页
+  </ContentField>
 </template>
 
 <script>

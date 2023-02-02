@@ -1,7 +1,6 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
-  transpileDependencies: true,
-  lintOnSave: false
+  transpileDependencies: true
 })
 
 module.exports = {
@@ -12,6 +11,5 @@ module.exports = {
         args[0].title= 'Snake Fight'
         return args
       })
-  },
-  lintOnSave: false
+  }
 }

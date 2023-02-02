@@ -1,7 +1,7 @@
 <template>
-    <div class="playground">
-        <GameMap />
-    </div>
+  <div class="playground">
+    <GameMap />
+  </div>
 </template>
 
 <script>

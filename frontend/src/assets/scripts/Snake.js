@@ -28,7 +28,7 @@ export class Snake extends AcGameObject {
         this.eye_dy = [[-1, -1], [-1, 1], [1, 1], [1, -1]];
     }
 
-    start() {}
+    start() { }
 
     update() {
         if (this.status === 'move')
@@ -78,19 +78,19 @@ export class Snake extends AcGameObject {
     set_direction(d) {
         this.direction = d;
     }
-    
+
     // 将蛇的状态变为走下一步
     next_step() {
         const d = this.eye_direction = this.direction;
         this.next_cell = new Cell(this.body[0].r + this.dr[d], this.body[0].c + this.dc[d]);
-        
+
         // 操作非法
         if (!this.gamemap.check_valid(this.next_cell)) {
             this.status = 'die';
             this.head_color = '#FFFFFF';
             return;
         }
-        
+
         this.direction = -1;    // 清空操作
         this.status = 'move';
         this.turns++;
@@ -106,7 +106,7 @@ export class Snake extends AcGameObject {
         const dx = this.next_cell.x - this.body[0].x;
         const dy = this.next_cell.y - this.body[0].y;
         const d = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (d < this.eps) {
             // 如果已经在误差范围内
             this.body[0] = this.next_cell;

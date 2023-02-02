@@ -1,5 +1,5 @@
 <template>
-    <PlayGround />
+  <PlayGround />
 </template>
 
 <script>

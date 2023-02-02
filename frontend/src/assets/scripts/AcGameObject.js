@@ -14,7 +14,7 @@ export class AcGameObject {
     }
 
     // 每一帧执行一次，除了第一帧之外
-    update() {  
+    update() {
     }
 
     // 删除之前执行
