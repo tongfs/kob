@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kob.common.exception.UserException;
 import com.kob.common.model.R;
-import com.kob.mainserver.exception.UserLoginException;
 import com.kob.mainserver.model.bo.UserLoginBO;
 import com.kob.mainserver.model.bo.UserRegisterBO;
 import com.kob.mainserver.model.vo.UserInfoVO;
@@ -37,8 +37,8 @@ public class UserController {
         try {
             userService.register(userRegisterBO);
             return R.ok();
-        } catch (UserLoginException e) {
-            return R.error(e.getCode(), e.getMessage());
+        } catch (UserException e) {
+            return R.error(e);
         }
     }
 

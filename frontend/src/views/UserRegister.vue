@@ -69,12 +69,15 @@ export default {
     components: {
         ContentField
     },
+
     setup() {
         let username = ref('');
         let password = ref('');
         let confirmedPassword = ref('');
         let msg = ref('');
+
         const store = useStore();
+
         const register = () => {
             $.ajax({
                 url: store.state.url + '/user/register',
@@ -95,6 +98,7 @@ export default {
                 },
             })
         };
+        
         return {
             username,
             password,

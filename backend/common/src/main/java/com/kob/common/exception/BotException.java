@@ -1,4 +1,4 @@
-package com.kob.mainserver.exception;
+package com.kob.common.exception;
 
 import com.kob.common.enums.ErrorCode;
 

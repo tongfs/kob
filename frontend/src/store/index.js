@@ -1,9 +1,11 @@
 import { createStore } from 'vuex'
 import ModuleUser from './user'
+import ModulePk from './pk'
 
 export default createStore({
   state: {
-    url: 'http://localhost:3000'
+    url: 'http://localhost:3000',
+    ws: 'ws://localhost:3000/websocket'
   },
   getters: {
   },
@@ -12,6 +14,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    user: ModuleUser
+    user: ModuleUser,
+    pk: ModulePk
   }
 })

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.kob.common.constant.Constants;
 import com.kob.common.enums.ErrorCode;
-import com.kob.mainserver.exception.UserLoginException;
+import com.kob.common.exception.UserException;
 import com.kob.mainserver.mapper.UserMapper;
 import com.kob.mainserver.model.UserDetailsImpl;
 import com.kob.mainserver.model.bo.UserLoginBO;
@@ -47,26 +47,26 @@ public class UserServiceImpl implements UserService {
         String confirmedPassword = userRegisterBO.getConfirmedPassword();
 
         if (StringUtils.isBlank(username)) {
-            throw new UserLoginException(ErrorCode.USERNAME_BLANK);
+            throw new UserException(ErrorCode.USERNAME_BLANK);
         }
         if (StringUtils.isBlank(password) || StringUtils.isBlank(confirmedPassword)) {
-            throw new UserLoginException(ErrorCode.PASSWORD_BLANK);
+            throw new UserException(ErrorCode.PASSWORD_BLANK);
         }
         if (StringUtils.length(username) > Constants.USERNAME_MAX_LENGTH) {
-            throw new UserLoginException(ErrorCode.USERNAME_TOO_LONG);
+            throw new UserException(ErrorCode.USERNAME_TOO_LONG);
         }
         if (StringUtils.length(password) > Constants.PASSWORD_MAX_LENGTH) {
-            throw new UserLoginException(ErrorCode.PASSWORD_TOO_LONG);
+            throw new UserException(ErrorCode.PASSWORD_TOO_LONG);
         }
         if (!StringUtils.equals(password, confirmedPassword)) {
-            throw new UserLoginException(ErrorCode.PASSWORD_INCONSISTENCY);
+            throw new UserException(ErrorCode.PASSWORD_INCONSISTENCY);
         }
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUsername, username);
         boolean exists = userMapper.exists(queryWrapper);
         if (exists) {
-            throw new UserLoginException(ErrorCode.USER_ALREADY_EXISTS);
+            throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         String encodePassword = passwordEncoder.encode(password);
@@ -100,5 +100,10 @@ public class UserServiceImpl implements UserService {
         UserInfoVO userInfoVO = new UserInfoVO();
         BeanUtils.copyProperties(user, userInfoVO);
         return userInfoVO;
+    }
+
+    @Override
+    public User getUserById(long userId) {
+        return userMapper.selectById(userId);
     }
 }

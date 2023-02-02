@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kob.common.exception.BotException;
 import com.kob.common.model.R;
-import com.kob.mainserver.exception.BotException;
 import com.kob.mainserver.model.bo.BotAddBO;
+import com.kob.mainserver.model.bo.BotRemoveBO;
 import com.kob.mainserver.model.bo.BotUpdateBO;
 import com.kob.mainserver.model.po.Bot;
 import com.kob.mainserver.service.BotService;
@@ -38,12 +39,14 @@ public class BotController {
     }
 
     @PostMapping("/remove")
-    public R deleteBot(@RequestBody Long botId) {
+    public R deleteBot(@RequestBody BotRemoveBO botRemoveBO) {
         try {
-            botService.delete(botId);
+            botService.delete(botRemoveBO.getBotId());
             return R.ok();
         } catch (BotException e) {
             return R.error(e);
+        } catch (Exception e) {
+            return R.error();
         }
     }
 

@@ -3,17 +3,17 @@ import { Snake } from "./Snake";
 import { Wall } from "./Wall";
 
 export class GameMap extends AcGameObject {
-    constructor(ctx, parent) {  // ctx是画布, parent是画布的父元素
+    constructor(ctx, parent, gameMap) {  // ctx是画布, parent是画布的父元素
         super();
 
         this.ctx = ctx;
         this.parent = parent;
         this.L = 0;
 
-        this.rows = 13;
-        this.cols = 14;
+        this.rows = gameMap.length;
+        this.cols = gameMap[0].length;
 
-        this.blocks_count = 30;   //  障碍物的数量
+        this.gameMap = gameMap;
         this.walls = [];
 
         this.snakes = [
@@ -24,7 +24,7 @@ export class GameMap extends AcGameObject {
 
     start() {
         this.add_listening_events();
-        while (!this.create_walls());
+        this.create_walls();
     }
 
     update() {
@@ -70,57 +70,9 @@ export class GameMap extends AcGameObject {
         });
     }
 
-    // 判断地图是否连通
-    check_connectivity(g, x1, y1, x2, y2) {
-        if (x1 == x2 && y1 == y2) return true;
-        g[x1][y1] = true;
-
-        let dx = [0, -1, 0, 1], dy = [-1, 0, 1, 0];
-        for (let i = 0; i < 4; i++) {
-            let x = x1 + dx[i], y = y1 + dy[i];
-            if (!g[x][y] && this.check_connectivity(g, x, y, x2, y2))
-                return true;
-        }
-
-        return false;
-    }
-
     // 创建障碍物
     create_walls() {
-        const g = [];
-        for (let r = 0; r < this.rows; r++) {
-            g[r] = [];
-            for (let c = 0; c < this.cols; c++) {
-                g[r][c] = false;
-            }
-        }
-
-        // 给四周加上障碍物
-        for (let r = 0; r < this.rows; r++) {
-            g[r][0] = g[r][this.cols - 1] = true;
-        }
-        for (let c = 0; c < this.cols; c++) {
-            g[0][c] = g[this.rows - 1][c] = true;
-        }
-
-        // 创建随机障碍物
-        for (let cnt = 0; cnt < this.blocks_count;) {
-            let r = parseInt(Math.random() * this.rows);
-            let c = parseInt(Math.random() * this.cols);
-
-            if (g[r][c]) continue;
-            if (r == this.rows - 2 && c == 1 || r == 1 && c == this.cols - 2) continue;
-
-            g[r][c] = g[this.rows - r - 1][this.cols - c - 1] = true;
-
-            if (r == this.rows - r - 1 && c == this.cols - c - 1) cnt += 1;
-            else cnt += 2;
-        }
-
-        const copy_g = JSON.parse(JSON.stringify(g));
-        if (!this.check_connectivity(copy_g, this.rows - 2, 1, 1, this.cols - 2))
-            return false;
-
+        const g = this.gameMap;
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
                 if (g[r][c]) {
@@ -128,8 +80,6 @@ export class GameMap extends AcGameObject {
                 }
             }
         }
-
-        return true;
     }
 
     // 判断玩家有没有准备好进行下一步

@@ -59,6 +59,7 @@ export default {
         let username = ref('');
         let password = ref('');
         let msg = ref('');
+
         const login = () => {
             store.dispatch('login', {
                 username: username.value,
@@ -74,7 +75,8 @@ export default {
                     msg.value = '用户名或密码错误';
                 }
             })
-        }
+        };
+
         return {
             username,
             password,

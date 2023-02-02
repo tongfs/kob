@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.kob.common.constant.Constants;
 import com.kob.common.enums.ErrorCode;
-import com.kob.mainserver.exception.BotException;
+import com.kob.common.exception.BotException;
 import com.kob.mainserver.mapper.BotMapper;
 import com.kob.mainserver.model.bo.BotAddBO;
 import com.kob.mainserver.model.bo.BotUpdateBO;

@@ -74,9 +74,10 @@
                       <label
                         for="add-bot-code"
                         class="form-label"
-                      >代码（仅支持Java语言）</label>
+                      >{{ lang_desc }}</label>
                       <VAceEditor
                         v-model:value="new_bot.content"
+                        :options="{ fontSize: 16 }"
                         lang="java"
                         theme="textmate"
                         style="height: 300px"
@@ -192,9 +193,10 @@
                               <label
                                 for="add-bot-code"
                                 class="form-label"
-                              >代码</label>
+                              >{{ lang_desc }}</label>
                               <VAceEditor
                                 v-model:value="bot.content"
+                                :options="{ fontSize: 16 }"
                                 lang="java"
                                 theme="textmate"
                                 style="height: 300px"
@@ -255,6 +257,7 @@ export default {
     const store = useStore();
     let bots = ref([]);
     let msg = ref('');
+    let lang_desc = ref('代码（暂仅支持Java）');
     const new_bot = reactive({
       title: '',
       description: '',
@@ -312,7 +315,7 @@ export default {
         headers: {
           Authorization: 'Bearer ' + store.state.user.token,
         },
-        data:JSON.stringify({
+        data: JSON.stringify({
           botId: bot.id
         }),
         success(resp) {
@@ -348,17 +351,18 @@ export default {
           }
         }
       })
-    }
+    };
 
     return {
       bots,
       new_bot,
       msg,
+      lang_desc,
       refresh_bots,
       add_bot,
       remove_bot,
       update_bot,
-    }
+    };
   }
 }
 </script>

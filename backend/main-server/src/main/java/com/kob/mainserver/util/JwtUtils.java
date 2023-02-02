@@ -1,5 +1,8 @@
 package com.kob.mainserver.util;
 
+import static com.kob.common.constant.Constants.JWT_KEY;
+import static com.kob.common.constant.Constants.JWT_TTL;
+
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -17,16 +20,23 @@ import io.jsonwebtoken.SignatureAlgorithm;
  * @date 2023/1/1
  */
 public class JwtUtils {
-    private static final long JWT_TTL = 60 * 60 * 1000L * 24 * 14;  // 有效期14天
-    private static final String JWT_KEY = "S57RlfE229dQHhfn1x1g4WeMVoXloeZ8sDIjSl3Td8b6ozpSoOVdhQNDWqKlM0Kk";
 
-    private static String getUUID() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
+    public static Claims parseJWT(String jwt) throws Exception {
+        SecretKey secretKey = generalKey();
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
     }
 
     public static String createJWT(String subject) {
         JwtBuilder builder = getJwtBuilder(subject, null, getUUID());
         return builder.compact();
+    }
+
+    private static String getUUID() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis, String uuid) {
@@ -35,7 +45,7 @@ public class JwtUtils {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         if (ttlMillis == null) {
-            ttlMillis = JwtUtils.JWT_TTL;
+            ttlMillis = JWT_TTL;
         }
 
         long expMillis = nowMillis + ttlMillis;
@@ -49,17 +59,8 @@ public class JwtUtils {
                 .setExpiration(expDate);
     }
 
-    public static SecretKey generalKey() {
-        byte[] encodeKey = Base64.getDecoder().decode(JwtUtils.JWT_KEY);
+    private static SecretKey generalKey() {
+        byte[] encodeKey = Base64.getDecoder().decode(JWT_KEY);
         return new SecretKeySpec(encodeKey, 0, encodeKey.length, "HmacSHA256");
-    }
-
-    public static Claims parseJWT(String jwt) throws Exception {
-        SecretKey secretKey = generalKey();
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(jwt)
-                .getBody();
     }
 }

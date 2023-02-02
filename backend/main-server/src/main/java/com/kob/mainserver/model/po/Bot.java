@@ -2,9 +2,6 @@ package com.kob.mainserver.model.po;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-
 import lombok.Data;
 
 /**
@@ -14,7 +11,6 @@ import lombok.Data;
 @Data
 public class Bot {
 
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     private Long userId;

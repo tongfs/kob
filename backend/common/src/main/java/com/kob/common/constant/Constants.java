@@ -8,7 +8,6 @@ public class Constants {
 
     public static final Integer USERNAME_MAX_LENGTH = 20;
     public static final Integer PASSWORD_MAX_LENGTH = 20;
-
     public static final String DEFAULT_AVATAR =
             "https://pic4.zhimg.com/80/v2-f262a5a14d98ec31b59d1dc6893308e3_1440w.webp";
     public static final Integer DEFAULT_SCORE = 3000;
@@ -17,4 +16,7 @@ public class Constants {
     public static final Integer BOT_DESC_MAX_LENGTH = 255;
     public static final Integer BOT_CONTENT_MAX_LENGTH = 2000;
     public static final Integer BOT_DEFAULT_RATING = 1500;
+
+    public static final long JWT_TTL = 1000L * 60 * 60 * 24 * 7 * 2;
+    public static final String JWT_KEY = "S57RlfE229dQHhfn1x1g4WeMVoXloeZ8sDIjSl3Td8b6ozpSoOVdhQNDWqKlM0Kk";
 }

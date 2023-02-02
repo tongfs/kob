@@ -3,6 +3,7 @@ package com.kob.common.model;
 import java.util.LinkedHashMap;
 
 import com.kob.common.enums.ErrorCode;
+import com.kob.common.exception.BaseCustomException;
 
 /**
  * @author tongfs@stu.pku.edu.cn
@@ -53,9 +54,9 @@ public class R extends LinkedHashMap<String, Object> {
         return r;
     }
 
-    public static R error(Exception e) {
+    public static R error(BaseCustomException e) {
         R r = new R();
-        r.put("code", ErrorCode.DEFAULT_EXCEPTION.getCode());
+        r.put("code", e.getCode());
         r.put("message", e.getMessage());
         return r;
     }
