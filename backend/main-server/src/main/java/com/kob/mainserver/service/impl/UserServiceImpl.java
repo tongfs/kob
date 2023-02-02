@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.kob.common.constant.Constants;
 import com.kob.common.enums.ErrorCode;
 import com.kob.mainserver.exception.UserLoginException;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public UserLoginVO register(UserRegisterBO userRegisterBO) {
+    public void register(UserRegisterBO userRegisterBO) {
         String username = userRegisterBO.getUsername();
         String password = userRegisterBO.getPassword();
         String confirmedPassword = userRegisterBO.getConfirmedPassword();
@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
             throw new UserLoginException(ErrorCode.PASSWORD_INCONSISTENCY);
         }
 
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, username);
         boolean exists = userMapper.exists(queryWrapper);
         if (exists) {
             throw new UserLoginException(ErrorCode.USER_ALREADY_EXISTS);
@@ -76,24 +76,13 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(Constants.DEFAULT_AVATAR);
         user.setScore(Constants.DEFAULT_SCORE);
         userMapper.insert(user);
-
-        return login(username, password);
     }
 
     @Override
     public UserLoginVO login(UserLoginBO userLoginBO) {
-        return login(userLoginBO.getUsername(), userLoginBO.getPassword());
-    }
+        String username = userLoginBO.getUsername();
+        String password = userLoginBO.getPassword();
 
-    @Override
-    public UserInfoVO getInfo() {
-        User user = AuthenticationUtils.getUser();
-        UserInfoVO userInfoVO = new UserInfoVO();
-        BeanUtils.copyProperties(user, userInfoVO);
-        return userInfoVO;
-    }
-
-    private UserLoginVO login(String username, String password) {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(username, password);
         Authentication authenticate = authenticationManager.authenticate(authentication);
@@ -103,5 +92,13 @@ public class UserServiceImpl implements UserService {
 
         String jwt = JwtUtils.createJWT((user.getId().toString()));
         return new UserLoginVO(jwt);
+    }
+
+    @Override
+    public UserInfoVO getInfo() {
+        User user = AuthenticationUtils.getUser();
+        UserInfoVO userInfoVO = new UserInfoVO();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return userInfoVO;
     }
 }

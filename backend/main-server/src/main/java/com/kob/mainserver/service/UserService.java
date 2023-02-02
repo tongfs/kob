@@ -13,7 +13,7 @@ public interface UserService {
     /**
      * 注册
      */
-    UserLoginVO register(UserRegisterBO userRegisterBO);
+    void register(UserRegisterBO userRegisterBO);
 
     /**
      * 登录

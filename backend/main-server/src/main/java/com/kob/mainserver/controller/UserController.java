@@ -35,8 +35,8 @@ public class UserController {
     @PostMapping("/register")
     public R register(@RequestBody UserRegisterBO userRegisterBO) {
         try {
-            UserLoginVO loginVO = userService.register(userRegisterBO);
-            return R.ok(loginVO);
+            userService.register(userRegisterBO);
+            return R.ok();
         } catch (UserLoginException e) {
             return R.error(e.getCode(), e.getMessage());
         }
