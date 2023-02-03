@@ -1,16 +1,18 @@
 package com.kob.mainserver.service.impl;
 
+import static com.kob.common.constant.Constants.MATCH_SERVER;
 import static com.kob.common.enums.SocketResultType.MATCHING_SUCCESS;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.kob.common.model.SocketResp;
+import com.kob.common.model.dto.PlayerDTO;
+import com.kob.common.model.dto.MatchRemoveDTO;
 import com.kob.mainserver.mapper.RecordMapper;
 import com.kob.mainserver.model.bean.Game;
 import com.kob.mainserver.model.bean.Player;
@@ -33,30 +35,28 @@ public class GameServiceImpl implements GameService {
     private static final int COLS = 14;
     private static final int BLOCK_COUNT = 20;
 
+    private static final String MATCH_ADD_URI = "/match/add";
+    private static final String MATCH_REMOVE_URI = "/match/remove";
+
     @Autowired
-    private Set<User> matchPool;
+    private RestTemplate restTemplate;
 
     @Autowired
     private RecordMapper recordMapper;
 
+    @Autowired
+    private Map<Long, UserConnection> users;
+
     @Override
-    public void startMatching(User user, Map<Long, UserConnection> users) {
-        matchPool.add(user);
-
-        while (matchPool.size() >= 2) {
-            Iterator<User> iterator = matchPool.iterator();
-            User a = iterator.next();
-            User b = iterator.next();
-            matchPool.remove(a);
-            matchPool.remove(b);
-
-            createNewGame(users.get(a.getId()), users.get(b.getId()));
-        }
+    public void startMatching(User user) {
+        PlayerDTO playerDTO = new PlayerDTO(user.getId(), user.getScore(), 0);
+        restTemplate.postForObject(MATCH_SERVER + MATCH_ADD_URI, playerDTO, Object.class);
     }
 
     @Override
     public void stopMatching(User user) {
-        matchPool.remove(user);
+        MatchRemoveDTO matchRemoveDTO = new MatchRemoveDTO(user.getId());
+        restTemplate.postForObject(MATCH_SERVER + MATCH_REMOVE_URI, matchRemoveDTO, Object.class);
     }
 
     @Override
@@ -76,6 +76,12 @@ public class GameServiceImpl implements GameService {
         } else if (player2.getId().equals(user.getId())) {
             player2.setNextStep(direction);
         }
+    }
+
+    @Override
+    public void startGame(Long playerId1, Long playerId2) {
+        System.out.println("match success, player" + playerId1 + " vs player" +playerId2);
+        createNewGame(users.get(playerId1), users.get(playerId2));
     }
 
     /**
@@ -150,7 +156,6 @@ public class GameServiceImpl implements GameService {
         }
 
         return checkConnectivity(ROWS - 2, 1, 1, COLS - 2, g);
-
     }
 
     /**

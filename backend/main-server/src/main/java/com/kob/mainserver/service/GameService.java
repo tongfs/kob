@@ -1,7 +1,5 @@
 package com.kob.mainserver.service;
 
-import java.util.Map;
-
 import com.kob.mainserver.model.bean.Game;
 import com.kob.mainserver.model.bean.UserConnection;
 import com.kob.mainserver.model.po.User;
@@ -15,7 +13,7 @@ public interface GameService {
     /**
      * 开始匹配
      */
-    void startMatching(User user, Map<Long, UserConnection> users);
+    void startMatching(User user);
 
     /**
      * 取消匹配
@@ -31,4 +29,9 @@ public interface GameService {
      * 蛇移动
      */
     void playerMove(UserConnection userConnection, int direction);
+
+    /**
+     * 开始游戏
+     */
+    void startGame(Long playerId1, Long playerId2);
 }

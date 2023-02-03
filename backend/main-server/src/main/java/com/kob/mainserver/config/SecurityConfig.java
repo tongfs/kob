@@ -1,5 +1,7 @@
 package com.kob.mainserver.config;
 
+import static com.kob.common.constant.Constants.LOCALHOST;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +27,12 @@ import com.kob.mainserver.filter.JwtAuthenticationTokenFilter;
 // TODO 更换弃用的类
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] PERMIT_ALL_PATTERNS = {
+    private static final String[] PERMIT_OUT_URI = {
             "/user/login",
             "/user/register"
+    };
+    private static final String[] PERMIT_LOCAL_URI = {
+            "/game/start"
     };
 
     @Autowired
@@ -50,7 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(PERMIT_ALL_PATTERNS).permitAll()
+                .antMatchers(PERMIT_OUT_URI).permitAll()
+                .antMatchers(PERMIT_LOCAL_URI).hasIpAddress(LOCALHOST)
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 

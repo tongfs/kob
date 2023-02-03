@@ -80,7 +80,7 @@ public class WebSocket {
         JsonObject jsonObject = GsonUtils.fromJson(message, JsonObject.class);
         int event = jsonObject.get("event").getAsInt();
         if (event == MATCH.getCode()) {
-            gameService.startMatching(user, users);
+            gameService.startMatching(user);
         } else if (event == CANCEL.getCode()) {
             gameService.stopMatching(user);
         } else if (event == MOVE.getCode()) {
