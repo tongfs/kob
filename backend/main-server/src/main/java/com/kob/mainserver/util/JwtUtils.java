@@ -1,8 +1,5 @@
 package com.kob.mainserver.util;
 
-import static com.kob.common.constant.Constants.JWT_KEY;
-import static com.kob.common.constant.Constants.JWT_TTL;
-
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -20,6 +17,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
  * @date 2023/1/1
  */
 public class JwtUtils {
+
+    private static final long JWT_TTL = 1000L * 60 * 60 * 24 * 7 * 2;
+    private static final String JWT_KEY = "S57RlfE229dQHhfn1x1g4WeMVoXloeZ8sDIjSl3Td8b6ozpSoOVdhQNDWqKlM0Kk";
 
     public static Claims parseJWT(String jwt) throws Exception {
         SecretKey secretKey = generalKey();

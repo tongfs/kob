@@ -2,19 +2,22 @@
   <div>
     <MatchPanel v-if="$store.state.pk.status === 'matching'" />
     <PlayGround v-if="$store.state.pk.status === 'playing'" />
+    <ResultBoard v-if="$store.state.pk.loser" />
   </div>
 </template>
 
 <script>
-import PlayGround from '@/components/PlayGround'
+import PlayGround from '@/components/PlayGround';
 import MatchPanel from '@/components/MatchPanel';
+import ResultBoard from '@/components/ResultBoard';
 import { onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
   components: {
     PlayGround,
-    MatchPanel
+    MatchPanel,
+    ResultBoard
   },
 
   setup() {
@@ -32,34 +35,43 @@ export default {
       });
 
       socket.onopen = () => {
-        console.log('open');
         store.commit('updateSocket', socket)
       };
 
       socket.onmessage = msg => {
         const resp = JSON.parse(msg.data);
-        console.log(resp);
+        const data = resp.data;
+
         if (resp.code === 1) {
-          const data = resp.data;
-          store.commit('updateOpponent', {
-            username: data.opponentUsername,
-            avatar: data.opponentAvatar,
-          });
+          store.commit('updateOpponent', data.opponent);
+          store.commit('updateGame', data);
           setTimeout(() => {
             store.commit('updateStatus', 'playing')
           }, 2000);
-          store.commit('updateGameMap', data.gameMap);
+        } else if (resp.code === 2) {
+          const game = store.state.pk.game;
+          const [snake1, snake2] = game.snakes;
+          snake1.set_direction(data.step1);
+          snake2.set_direction(data.step2);
+        } else if (resp.code === 3) {
+          const game = store.state.pk.game;
+          const [snake1, snake2] = game.snakes;
+          if (data.loser === 1 || data.loser === 3) {
+            snake1.die();
+          }
+          if (data.loser === 2 || data.loser === 3) {
+            snake2.die();
+          }
+          store.commit('updateLoser', data.loser);
         }
       };
 
       socket.onclose = () => {
-        console.log('onclose');
       };
     });
 
     onUnmounted(() => {
       socket.close();
-      console.log('close')
       store.commit('updateStatus', 'matching')
     });
   }

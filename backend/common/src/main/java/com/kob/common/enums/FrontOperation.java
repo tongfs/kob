@@ -9,9 +9,10 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum MatchStatus {
+public enum FrontOperation {
     CANCEL(0),
     MATCH(1),
+    MOVE(2),
     ;
 
     private final Integer code;

@@ -1,3 +1,4 @@
+import { useStore } from "vuex";
 import { AcGameObject } from "./AcGameObject";
 import { Snake } from "./Snake";
 import { Wall } from "./Wall";
@@ -20,6 +21,8 @@ export class GameMap extends AcGameObject {
             new Snake({ id: 1, color: '#4876EC', r: this.rows - 2, c: 1 }, this),
             new Snake({ id: 2, color: '#F94848', r: 1, c: this.cols - 2 }, this)
         ];
+
+        this.store = useStore();
     }
 
     start() {
@@ -57,16 +60,19 @@ export class GameMap extends AcGameObject {
         this.ctx.canvas.focus();
 
         // 监听按键
-        const [snake1, snake2] = this.snakes;
         this.ctx.canvas.addEventListener('keydown', e => {
-            if (e.key === 'w') snake1.set_direction(0);
-            else if (e.key === 'd') snake1.set_direction(1);
-            else if (e.key === 's') snake1.set_direction(2);
-            else if (e.key === 'a') snake1.set_direction(3);
-            else if (e.key === 'ArrowUp') snake2.set_direction(0);
-            else if (e.key === 'ArrowRight') snake2.set_direction(1);
-            else if (e.key === 'ArrowDown') snake2.set_direction(2);
-            else if (e.key === 'ArrowLeft') snake2.set_direction(3);
+            let d = -1;
+            if (e.key === 'w' || e.key === 'ArrowUp') d = 0;
+            else if (e.key === 'd' || e.key === 'ArrowRight') d = 1;
+            else if (e.key === 's' || e.key === 'ArrowDown') d = 2;
+            else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
+
+            if (d >= 0) {
+                this.store.state.pk.socket.send(JSON.stringify({
+                    event: 2,
+                    direction: d
+                }));
+            }
         });
     }
 
@@ -104,28 +110,5 @@ export class GameMap extends AcGameObject {
         this.L = parseInt(Math.min(this.parent.clientWidth / this.cols, this.parent.clientHeight / this.rows));
         this.ctx.canvas.width = this.L * this.cols;
         this.ctx.canvas.height = this.L * this.rows;
-    }
-
-    // 判断玩家走位是否合法
-    check_valid(cell) {
-        // 撞墙
-        for (const wall of this.walls) {
-            if (cell.r === wall.r && cell.c === wall.c) {
-                return false;
-            }
-        }
-
-        // 撞到自己或他人
-        for (const snake of this.snakes) {
-            let k = snake.body.length;
-            if (!snake.check_increasing()) k--;
-            for (let i = 0; i < k; i++) {
-                if (snake.body[i].r === cell.r && snake.body[i].c === cell.c) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 }

@@ -1,7 +1,5 @@
 package com.kob.common.enums;
 
-import com.kob.common.constant.Constants;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,7 +25,7 @@ public enum ErrorCode {
     // 300: Bot相关
     BOT_TITLE_BLANK(301, "Bot名称为空"),
     BOT_TITLE_TOO_LONG(302, "Bot名称过长"),
-    BOT_DESC_TO_LONG(303, "描述不超过" + Constants.BOT_DESC_MAX_LENGTH + "个字符"),
+    BOT_DESC_TO_LONG(303, "描述过长"),
     BOT_CONTENT_BLANK(304, "Bot代码为空"),
     BOT_CONTENT_TO_LONG(305, "Bot代码过长"),
     BOT_NOT_EXIST(306, "Bot不存在或已被删除"),

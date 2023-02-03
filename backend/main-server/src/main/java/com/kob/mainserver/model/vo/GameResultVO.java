@@ -6,16 +6,12 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author tongfs@stu.pku.edu.cn
- * @date 2023/2/2
+ * @date 2023/2/3
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchResultVO {
+public class GameResultVO {
 
-    private String opponentUsername;
-
-    private String opponentAvatar;
-
-    private int[][] gameMap;
+    private Integer loser;
 }

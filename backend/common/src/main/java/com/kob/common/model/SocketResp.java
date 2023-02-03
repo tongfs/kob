@@ -3,7 +3,7 @@ package com.kob.common.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.kob.common.enums.SocketResult;
+import com.kob.common.enums.SocketResultType;
 import com.kob.common.util.GsonUtils;
 
 /**
@@ -11,10 +11,10 @@ import com.kob.common.util.GsonUtils;
  * @date 2023/2/2
  */
 public class SocketResp {
-    public static String ok(SocketResult result, Object data) {
+    public static String ok(SocketResultType type, Object data) {
         Map<String, Object> map = new HashMap<>();
-        map.put("code", result.getCode());
-        map.put("desc", result.getDesc());
+        map.put("code", type.getCode());
+        map.put("desc", type.getDesc());
         map.put("data", data);
         return GsonUtils.toJson(map);
     }

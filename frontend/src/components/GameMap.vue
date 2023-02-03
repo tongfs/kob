@@ -22,7 +22,8 @@ export default {
     let parent = ref(null);
 
     onMounted(() => {
-      new GameMap(canvas.value.getContext('2d'), parent.value, store.state.pk.gameMap)
+      const gameObject = new GameMap(canvas.value.getContext('2d'), parent.value, store.state.pk.gameMap);
+      store.commit('updateGameObject', gameObject);
     });
 
     return {

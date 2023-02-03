@@ -84,13 +84,6 @@ export class Snake extends AcGameObject {
         const d = this.eye_direction = this.direction;
         this.next_cell = new Cell(this.body[0].r + this.dr[d], this.body[0].c + this.dc[d]);
 
-        // 操作非法
-        if (!this.gamemap.check_valid(this.next_cell)) {
-            this.status = 'die';
-            this.head_color = '#FFFFFF';
-            return;
-        }
-
         this.direction = -1;    // 清空操作
         this.status = 'move';
         this.turns++;
@@ -138,5 +131,11 @@ export class Snake extends AcGameObject {
         if (this.turns <= 11) return this.turns & 1;
         if (this.turns % 3 === 2) return true;
         return false;
+    }
+
+    // 设置蛇的死亡状态
+    die() {
+        this.status = 'die';
+        this.head_color = '#FFFFFF';
     }
 }

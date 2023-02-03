@@ -2,11 +2,11 @@ export default {
     state: {
         status: 'matching',  // playing表示对战界面
         socket: null,
-        opponent: {
-            username: '',
-            avatar: ''
-        },
-        gameMap: null
+        opponent: {},
+        gameMap: null,
+        identity: 0,
+        game: null,
+        loser: 0
     },
     getters: {
     },
@@ -20,9 +20,16 @@ export default {
         updateStatus(state, status) {
             state.status = status;
         },
-        updateGameMap(state, gameMap) {
-            state.gameMap = gameMap;
+        updateGame(state, data) {
+            state.gameMap = data.gameMap;
+            state.identity = data.identity;
         },
+        updateGameObject(state, game) {
+            state.game = game;
+        },
+        updateLoser(state, loser) {
+            state.loser = loser;
+        }
     },
     actions: {
 
