@@ -7,7 +7,6 @@ export class Snake extends AcGameObject {
 
         this.id = info.id;
         this.color = info.color;
-        this.head_color = this.color;
         this.gamemap = gamemap;
 
         this.body = [new Cell(info.r, info.c)];  // 存放蛇的身体, body[0]存放蛇头
@@ -20,7 +19,7 @@ export class Snake extends AcGameObject {
         this.dr = [-1, 0, 1, 0];    // 行的偏移量
         this.dc = [0, 1, 0, -1];    // 列的偏移量
 
-        this.turns = 0;
+        this.round = 0;
         this.eps = 1e-2;
 
         this.eye_direction = this.id === 1 ? 0 : 2;
@@ -57,13 +56,6 @@ export class Snake extends AcGameObject {
             }
         }
 
-        // 画蛇头
-        ctx.fillStyle = this.head_color;
-        const cell = this.body[0];
-        ctx.beginPath();
-        ctx.arc(cell.x * L, cell.y * L, L * factor / 2, 0, Math.PI * 2);
-        ctx.fill();
-
         // 画眼睛
         ctx.fillStyle = '#000000';
         for (let i = 0; i < 2; i++) {
@@ -86,7 +78,7 @@ export class Snake extends AcGameObject {
 
         this.direction = -1;    // 清空操作
         this.status = 'move';
-        this.turns++;
+        this.round++;
 
         const k = this.body.length;
         for (let i = k; i > 0; i--) {
@@ -127,15 +119,18 @@ export class Snake extends AcGameObject {
 
     // 判断当前回合蛇的长度是否要增加
     check_increasing() {
-        if (this.turns <= 5) return true;
-        if (this.turns <= 11) return this.turns & 1;
-        if (this.turns % 3 === 2) return true;
+        if (this.round <= 5) return true;
+        if (this.round <= 11) return this.round & 1;
+        if (this.round % 3 === 2) return true;
         return false;
     }
 
     // 设置蛇的死亡状态
-    die() {
+    die(step) {
         this.status = 'die';
-        this.head_color = '#FFFFFF';
+        this.color = '#FFFFFF';
+        if (step !== -1) {
+            this.eye_direction = step;
+        }
     }
 }

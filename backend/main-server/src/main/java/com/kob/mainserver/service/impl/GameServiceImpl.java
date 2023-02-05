@@ -1,6 +1,13 @@
 package com.kob.mainserver.service.impl;
 
-import static com.kob.common.constant.Constants.MATCH_SERVER;
+import static com.kob.common.constant.Constants.BLOCK_COUNT;
+import static com.kob.common.constant.Constants.BOT_ADD_URL;
+import static com.kob.common.constant.Constants.COLS;
+import static com.kob.common.constant.Constants.MATCH_ADD_URL;
+import static com.kob.common.constant.Constants.MATCH_REMOVE_URL;
+import static com.kob.common.constant.Constants.ROWS;
+import static com.kob.common.constant.Constants.dx;
+import static com.kob.common.constant.Constants.dy;
 import static com.kob.common.enums.SocketResultType.MATCHING_SUCCESS;
 
 import java.util.Map;
@@ -11,16 +18,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.kob.common.model.SocketResp;
-import com.kob.common.model.dto.PlayerDTO;
+import com.kob.common.model.dto.GameSituation;
 import com.kob.common.model.dto.MatchRemoveDTO;
-import com.kob.mainserver.mapper.RecordMapper;
-import com.kob.mainserver.model.bean.Game;
+import com.kob.common.model.dto.PlayerDTO;
 import com.kob.mainserver.model.bean.Player;
 import com.kob.mainserver.model.bean.UserConnection;
+import com.kob.mainserver.model.po.Bot;
 import com.kob.mainserver.model.po.Record;
 import com.kob.mainserver.model.po.User;
 import com.kob.mainserver.model.vo.GameMatchResultVO;
+import com.kob.mainserver.service.BotService;
 import com.kob.mainserver.service.GameService;
+import com.kob.mainserver.service.RecordService;
+import com.kob.mainserver.thread.Game;
 
 /**
  * @author tongfs@stu.pku.edu.cn
@@ -29,83 +39,96 @@ import com.kob.mainserver.service.GameService;
 @Service
 public class GameServiceImpl implements GameService {
 
-    private static final int[] dx = {-1, 0, 1, 0};
-    private static final int[] dy = {0, 1, 0, -1};
-    private static final int ROWS = 13;
-    private static final int COLS = 14;
-    private static final int BLOCK_COUNT = 20;
-
-    private static final String MATCH_ADD_URI = "/match/add";
-    private static final String MATCH_REMOVE_URI = "/match/remove";
-
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
-    private RecordMapper recordMapper;
+    private RecordService recordService;
+
+    @Autowired
+    private BotService botService;
 
     @Autowired
     private Map<Long, UserConnection> users;
 
     @Override
-    public void startMatching(User user) {
-        PlayerDTO playerDTO = new PlayerDTO(user.getId(), user.getScore(), 0);
-        restTemplate.postForObject(MATCH_SERVER + MATCH_ADD_URI, playerDTO, Object.class);
+    public void startMatching(User user, long botId) {
+        PlayerDTO playerDTO = new PlayerDTO(user.getId(), botId, user.getScore(), 0);
+        restTemplate.postForObject(MATCH_ADD_URL, playerDTO, Object.class);
     }
 
     @Override
     public void stopMatching(User user) {
         MatchRemoveDTO matchRemoveDTO = new MatchRemoveDTO(user.getId());
-        restTemplate.postForObject(MATCH_SERVER + MATCH_REMOVE_URI, matchRemoveDTO, Object.class);
+        restTemplate.postForObject(MATCH_REMOVE_URL, matchRemoveDTO, Object.class);
     }
 
     @Override
     public void saveResult(Game game) {
         Record record = new Record(game);
-        recordMapper.insert(record);
+        recordService.insert(record);
     }
 
     @Override
-    public void playerMove(UserConnection userConnection, int direction) {
-        User user = userConnection.getUser();
-        Game game = userConnection.getGame();
+    public void setNextStep(long userId, int direction, boolean isPlayer) {
+        Game game = users.get(userId).getGame();
+
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
-        if (player1.getId().equals(user.getId())) {
-            player1.setNextStep(direction);
-        } else if (player2.getId().equals(user.getId())) {
-            player2.setNextStep(direction);
+
+        if (player1.getId() == userId) {
+            setNextStep(player1, direction, isPlayer);
+        } else if (player2.getId() == userId) {
+            setNextStep(player2, direction, isPlayer);
         }
     }
 
     @Override
-    public void startGame(Long playerId1, Long playerId2) {
-        System.out.println("match success, player" + playerId1 + " vs player" +playerId2);
-        createNewGame(users.get(playerId1), users.get(playerId2));
+    public void startGame(long playerId1, long botId1, long playerId2, long botId2) {
+        System.out.println("match success, player" + playerId1 + " vs player" + playerId2);
+        createNewGame(users.get(playerId1), botId1, users.get(playerId2), botId2);
+    }
+
+    @Override
+    public void setNextStepByBot(long userId, int direction) {
+        if (users.get(userId) != null) {
+            // 因为可能这个时候玩家离开游戏页面，可以直接判负
+            setNextStep(userId, direction, false);
+        }
+    }
+
+    @Override
+    public void requestForNextStep(GameSituation gameSituation) {
+        restTemplate.postForObject(BOT_ADD_URL, gameSituation, Object.class);
     }
 
     /**
      * 创建一局新游戏
      */
-    private void createNewGame(UserConnection connA, UserConnection connB) {
-        User userA = connA.getUser();
-        User userB = connB.getUser();
+    private void createNewGame(UserConnection conn1, long botId1, UserConnection conn2, long botId2) {
+        User user1 = conn1.getUser();
+        User user2 = conn2.getUser();
+
+        Bot bot1 = botService.selectUserBotById(botId1, user1.getId());
+        Bot bot2 = botService.selectUserBotById(botId2, user2.getId());
 
         // 创建
         int[][] gameMap = getGameMap();
-        Player playerA = new Player(userA.getId(), ROWS - 2, 1, connA.getWebSocket());
-        Player playerB = new Player(userB.getId(), 1, COLS - 2, connB.getWebSocket());
-        Game game = new Game(getGameMap(), playerA, playerB, this);
-        connA.setGame(game);
-        connB.setGame(game);
+        Player player1 = new Player(
+                user1.getId(), ROWS - 2, 1, bot1 == null ? null : bot1.getCode(), conn1.getWebSocket());
+        Player player2 = new Player(
+                user2.getId(), 1, COLS - 2, bot2 == null ? null : bot2.getCode(), conn2.getWebSocket());
+        Game game = new Game(gameMap, player1, player2, this);
+        conn1.setGame(game);
+        conn2.setGame(game);
 
         // 发送结果
         GameMatchResultVO result1 = new GameMatchResultVO(
-                new GameMatchResultVO.Opponent(userB.getUsername(), userB.getAvatar()), 1, gameMap);
+                new GameMatchResultVO.Opponent(user2.getUsername(), user2.getAvatar()), 1, gameMap);
         GameMatchResultVO result2 = new GameMatchResultVO(
-                new GameMatchResultVO.Opponent(userA.getUsername(), userA.getAvatar()), 2, gameMap);
-        connA.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result1));
-        connB.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result2));
+                new GameMatchResultVO.Opponent(user1.getUsername(), user1.getAvatar()), 2, gameMap);
+        conn1.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result1));
+        conn2.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result2));
 
         // 启动游戏
         new Thread(game).start();
@@ -177,5 +200,14 @@ public class GameServiceImpl implements GameService {
 
         g[x1][y1] = 0;
         return false;
+    }
+
+    /**
+     * 检查操作合法性并控制蛇移动
+     */
+    private void setNextStep(Player player, int direction, boolean isPlayer) {
+        if (player.getBotCode() != null || isPlayer) {
+            player.setNextStep(direction);
+        }
     }
 }

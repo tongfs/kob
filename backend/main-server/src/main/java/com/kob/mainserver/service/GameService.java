@@ -1,8 +1,8 @@
 package com.kob.mainserver.service;
 
-import com.kob.mainserver.model.bean.Game;
-import com.kob.mainserver.model.bean.UserConnection;
+import com.kob.common.model.dto.GameSituation;
 import com.kob.mainserver.model.po.User;
+import com.kob.mainserver.thread.Game;
 
 /**
  * @author tongfs@stu.pku.edu.cn
@@ -13,7 +13,7 @@ public interface GameService {
     /**
      * 开始匹配
      */
-    void startMatching(User user);
+    void startMatching(User user, long botId);
 
     /**
      * 取消匹配
@@ -28,10 +28,20 @@ public interface GameService {
     /**
      * 蛇移动
      */
-    void playerMove(UserConnection userConnection, int direction);
+    void setNextStep(long userId, int direction, boolean isPlayer);
 
     /**
      * 开始游戏
      */
-    void startGame(Long playerId1, Long playerId2);
+    void startGame(long playerId1, long botId1, long playerId2, long botId2);
+
+    /**
+     * bot控制蛇移动
+     */
+    void setNextStepByBot(long userId, int direction);
+
+    /**
+     * 发送请求获取bot下一步操作
+     */
+    void requestForNextStep(GameSituation gameSituation);
 }

@@ -1,9 +1,15 @@
 package com.kob.mainserver.model.bean;
 
+import static com.kob.common.constant.Constants.dx;
+import static com.kob.common.constant.Constants.dy;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.kob.common.model.dto.Cell;
 import com.kob.mainserver.socket.WebSocket;
+import com.kob.mainserver.thread.Game;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,11 +24,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Player {
 
-    public Player(Long id, Integer sx, Integer sy, WebSocket socket) {
+    public Player(Long id, Integer sx, Integer sy, String botCode, WebSocket socket) {
         this.id = id;
         this.sx = sx;
         this.sy = sy;
+        this.botCode = botCode;
         this.socket = socket;
+        this.getBody().offer(new Cell(sx, sy));
     }
 
     private Long id;
@@ -30,8 +38,13 @@ public class Player {
     /**
      * 初始时的坐标
      */
-    private Integer sx;
-    private Integer sy;
+    private int sx;
+    private int sy;
+
+    /**
+     * bot代码
+     */
+    private String botCode;
 
     /**
      * socket连接
@@ -41,7 +54,12 @@ public class Player {
     /**
      * 记录下一步往哪儿走
      */
-    private Integer nextStep;
+    private int nextStep = -1;
+
+    /**
+     * 当前蛇的身体
+     */
+    private LinkedList<Cell> body = new LinkedList<>();
 
     /**
      * 记录历史走过的方向
@@ -49,44 +67,45 @@ public class Player {
     private List<Integer> steps = new ArrayList<>();
 
     /**
-     * 记录自己的状态（0表示没输，1表示输了）
+     * 判断下一步
      */
-    private Integer lose = 0;
+    public boolean judge(List<Cell> opponent, Game game) {
 
-    /**
-     * 获得当前蛇的身体
-     */
-    public List<Cell> getBody() {
-        List<Cell> body = new ArrayList<>();
+        Cell head = body.getLast();
+        Cell newHead = new Cell(head.getX() + dx[nextStep], head.getY() + dy[nextStep]);
+        int[][] gameMap = game.getGameMap();
 
-        int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};
-        int a = sx, b = sy;
-        body.add(new Cell(a, b));
+        // 判断是否撞到障碍物
+        if (gameMap[newHead.getX()][newHead.getY()] == 1) {
+            return false;
+        }
 
-        for (int i = 0; i < steps.size(); i++) {
-            int d = steps.get(i);
-            a += dx[d];
-            b += dy[d];
-            body.add(new Cell(a, b));
-            if (!isIncreasing(i + 1)) {
-                body.remove(0);
+        // 判断是否碰到蛇身
+        for (Cell cell : body) {
+            if (isOverlapped(newHead, cell)) {
+                return false;
+            }
+        }
+        for (Cell cell : opponent) {
+            if (isOverlapped(newHead, cell)) {
+                return false;
             }
         }
 
-        return body;
+        // 如果下一步合法，就更新蛇身体和下一步操作列表
+        body.offer(newHead);
+        if (!game.isIncreasing()) {
+            body.poll();
+        }
+        steps.add(nextStep);
+
+        return true;
     }
 
     /**
-     * 当前回合蛇的身体是否要增长
+     * 判断单元格是否重复
      */
-    private boolean isIncreasing(int turn) {
-        if (turn <= 5) return true;
-        if (turn <= 11) return true;
-        return turn % 3 == 2;
-    }
-
-    @AllArgsConstructor
-    public static class Cell {
-        int x, y;
+    private boolean isOverlapped(Cell a, Cell b) {
+        return a.getX() == b.getX() && a.getY() == b.getY();
     }
 }

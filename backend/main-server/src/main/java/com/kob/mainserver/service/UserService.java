@@ -29,5 +29,5 @@ public interface UserService {
     /**
      * 通过userId获取User实例
      */
-    User getUserById(long userId);
+    User selectById(long userId);
 }

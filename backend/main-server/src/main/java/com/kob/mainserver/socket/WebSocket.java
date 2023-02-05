@@ -60,9 +60,10 @@ public class WebSocket {
     public void onOpen(Session session, @PathParam("token") String token) throws IOException {
         this.session = session;
         long userId = AuthenticationUtils.getUserId(token);
-        user = userService.getUserById(userId);
+        user = userService.selectById(userId);
         if (user == null) {
             session.close();
+            return;
         }
         users.put(userId, new UserConnection(this, user, null));
     }
@@ -80,12 +81,13 @@ public class WebSocket {
         JsonObject jsonObject = GsonUtils.fromJson(message, JsonObject.class);
         int event = jsonObject.get("event").getAsInt();
         if (event == MATCH.getCode()) {
-            gameService.startMatching(user);
+            long botId = jsonObject.get("botId").getAsLong();
+            gameService.startMatching(user, botId);
         } else if (event == CANCEL.getCode()) {
             gameService.stopMatching(user);
         } else if (event == MOVE.getCode()) {
             int direction = jsonObject.get("direction").getAsInt();
-            gameService.playerMove(users.get(user.getId()), direction);
+            gameService.setNextStep(user.getId(), direction, true);
         }
     }
 

@@ -15,5 +15,5 @@ public class BotUpdateBO {
 
     private String description;
 
-    private String content;
+    private String code;
 }

@@ -36,11 +36,11 @@ import com.kob.mainserver.util.JwtUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Integer USERNAME_MAX_LENGTH = 20;
-    private static final Integer PASSWORD_MAX_LENGTH = 20;
+    private static final int USERNAME_MAX_LENGTH = 20;
+    private static final int PASSWORD_MAX_LENGTH = 20;
     private static final String DEFAULT_AVATAR =
             "https://pic4.zhimg.com/80/v2-f262a5a14d98ec31b59d1dc6893308e3_1440w.webp";
-    private static final Integer DEFAULT_SCORE = 3000;
+    private static final int DEFAULT_SCORE = 3000;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) {
+    public User selectById(long userId) {
         return userMapper.selectById(userId);
     }
 }

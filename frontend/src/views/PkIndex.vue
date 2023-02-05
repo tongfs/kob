@@ -26,6 +26,8 @@ export default {
 
     let socket = null;
 
+    store.commit('updateLoser', 0);
+
     onMounted(() => {
       socket = new WebSocket(url);
 
@@ -35,7 +37,7 @@ export default {
       });
 
       socket.onopen = () => {
-        store.commit('updateSocket', socket)
+        store.commit('updateSocket', socket);
       };
 
       socket.onmessage = msg => {
@@ -57,10 +59,10 @@ export default {
           const game = store.state.pk.game;
           const [snake1, snake2] = game.snakes;
           if (data.loser === 1 || data.loser === 3) {
-            snake1.die();
+            snake1.die(data.step1);
           }
           if (data.loser === 2 || data.loser === 3) {
-            snake2.die();
+            snake2.die(data.step2);
           }
           store.commit('updateLoser', data.loser);
         }

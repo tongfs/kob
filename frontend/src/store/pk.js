@@ -6,7 +6,8 @@ export default {
         gameMap: null,
         identity: 0,
         game: null,
-        loser: 0
+        loser: 0,
+        botId: 0
     },
     getters: {
     },
@@ -29,6 +30,9 @@ export default {
         },
         updateLoser(state, loser) {
             state.loser = loser;
+        },
+        updateBotSelected(state, botId) {
+            state.botId = botId;
         }
     },
     actions: {

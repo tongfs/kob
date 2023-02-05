@@ -76,7 +76,7 @@
                         class="form-label"
                       >{{ lang_desc }}</label>
                       <VAceEditor
-                        v-model:value="new_bot.content"
+                        v-model:value="new_bot.code"
                         :options="{ fontSize: 16 }"
                         lang="java"
                         theme="textmate"
@@ -195,7 +195,7 @@
                                 class="form-label"
                               >{{ lang_desc }}</label>
                               <VAceEditor
-                                v-model:value="bot.content"
+                                v-model:value="bot.code"
                                 :options="{ fontSize: 16 }"
                                 lang="java"
                                 theme="textmate"
@@ -261,7 +261,7 @@ export default {
     const new_bot = reactive({
       title: '',
       description: '',
-      content: '',
+      code: '',
     });
 
     const refresh_bots = () => {
@@ -291,13 +291,13 @@ export default {
         data: JSON.stringify({
           title: new_bot.title,
           description: new_bot.description,
-          content: new_bot.content,
+          code: new_bot.code,
         }),
         success(resp) {
           if (resp.code === 0) {
             new_bot.title = '';
             new_bot.description = '';
-            new_bot.content = '';
+            new_bot.code = '';
             Modal.getInstance('#add-bot-btn').hide();
             refresh_bots();
           } else {
@@ -340,7 +340,7 @@ export default {
           botId: bot.id,
           title: bot.title,
           description: bot.description,
-          content: bot.content,
+          code: bot.code,
         }),
         success(resp) {
           if (resp.code === 0) {

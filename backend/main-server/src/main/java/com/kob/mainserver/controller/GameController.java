@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kob.common.model.R;
 import com.kob.common.model.dto.MatchResultDTO;
+import com.kob.common.model.dto.NextStepDTO;
 import com.kob.mainserver.service.GameService;
 
 /**
@@ -23,7 +24,15 @@ public class GameController {
 
     @PostMapping("/start")
     public R start(@RequestBody MatchResultDTO matchResultDTO) {
-        gameService.startGame(matchResultDTO.getPlayerId1(), matchResultDTO.getPlayerId2());
+        gameService.startGame(
+                matchResultDTO.getPlayerId1(), matchResultDTO.getBotId1(),
+                matchResultDTO.getPlayerId2(), matchResultDTO.getBotId2());
+        return R.ok();
+    }
+
+    @PostMapping("/next")
+    public R next(@RequestBody NextStepDTO nextStepDTO) {
+        gameService.setNextStepByBot(nextStepDTO.getUserId(), nextStepDTO.getDirection());
         return R.ok();
     }
 }

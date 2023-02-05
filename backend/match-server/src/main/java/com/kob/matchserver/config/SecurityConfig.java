@@ -1,6 +1,8 @@
 package com.kob.matchserver.config;
 
 import static com.kob.common.constant.Constants.LOCALHOST;
+import static com.kob.common.constant.Constants.MATCH_ADD_URI;
+import static com.kob.common.constant.Constants.MATCH_REMOVE_URI;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,8 +20,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PERMIT_LOCAL_URI = {
-            "/match/add",
-            "/match/remove"
+            MATCH_ADD_URI,
+            MATCH_REMOVE_URI
     };
 
     @Override

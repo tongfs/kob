@@ -3,7 +3,7 @@ package com.kob.mainserver.model.po;
 import java.util.Date;
 
 import com.kob.common.util.GsonUtils;
-import com.kob.mainserver.model.bean.Game;
+import com.kob.mainserver.thread.Game;
 import com.kob.mainserver.model.bean.Player;
 
 import lombok.Data;

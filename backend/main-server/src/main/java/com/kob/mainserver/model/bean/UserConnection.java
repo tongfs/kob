@@ -2,6 +2,7 @@ package com.kob.mainserver.model.bean;
 
 import com.kob.mainserver.model.po.User;
 import com.kob.mainserver.socket.WebSocket;
+import com.kob.mainserver.thread.Game;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

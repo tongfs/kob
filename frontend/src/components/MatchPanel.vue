@@ -1,7 +1,7 @@
 <template>
   <div class="match-panel">
     <div class="row">
-      <div class="col-6">
+      <div class="col-4">
         <div class="user-avatar">
           <img
             :src="$store.state.user.avatar"
@@ -12,7 +12,30 @@
           {{ $store.state.user.username }}
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-4">
+        <div class="bot-select">
+          <select
+            v-model="selected"
+            class="form-select"
+            aria-label="Default select example"
+          >
+            <option
+              selected
+              value="0"
+            >
+              键盘操作
+            </option>
+            <option
+              v-for="bot in bots"
+              :key="bot.id"
+              :value="bot.id"
+            >
+              {{ bot.title }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-4">
         <div class="user-avatar">
           <img
             :src="$store.state.pk.opponent.avatar"
@@ -28,6 +51,7 @@
         style="text-align: center; margin-top: 15vh;"
       >
         <button
+          v-if="$store.state.pk.identity === 0"
           type="button"
           class="btn btn-warning btn-lg"
           @click="click_match_btn"
@@ -42,6 +66,7 @@
 <script>
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import $ from 'jquery';
 
 export default {
     setup() {
@@ -55,6 +80,9 @@ export default {
             msg: match_states_list[0]
         })
 
+        let bots = ref([]);
+        let selected = ref(store.state.pk.botId);
+
         const click_match_btn = () => {
             let code = match_state.value.code;
             code = (code + 1) & 1;
@@ -62,15 +90,35 @@ export default {
                 code: code,
                 msg: match_states_list[code]
             }
-            
+
             store.state.pk.socket.send(JSON.stringify({
                 // 传给后端时，0是取消，1是匹配
-                event: code
+                event: code,
+                botId: selected.value
             }));
+
+            store.commit('updateBotSelected', selected.value);
         }
+
+        const refresh_bots = () => {
+            $.ajax({
+                url: store.state.url + '/bot/list',
+                type: 'get',
+                headers: {
+                    Authorization: 'Bearer ' + store.state.user.token,
+                },
+                success(resp) {
+                    bots.value = resp.data;
+                },
+            });
+        };
+        refresh_bots();
+
         return {
             match_state,
             click_match_btn,
+            bots,
+            selected
         }
     }
 }
@@ -100,5 +148,14 @@ div.user-username {
     font-weight: 600;
     color: white;
     padding-top: 2vh;
+}
+
+div.bot-select {
+    padding-top: 20vh;
+}
+
+div.bot-select>select {
+    width: 60%;
+    margin: 0 auto;
 }
 </style>

@@ -27,7 +27,7 @@ public class AuthenticationUtils {
         long userId;
         try {
             Claims claims = JwtUtils.parseJWT(token);
-            userId = new Integer(claims.getSubject());
+            userId = new Long(claims.getSubject());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

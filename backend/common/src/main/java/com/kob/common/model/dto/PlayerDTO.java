@@ -15,6 +15,8 @@ public class PlayerDTO {
 
     private Long userId;
 
+    private Long botId;
+
     private Integer score;
 
     private Integer waitingTime;

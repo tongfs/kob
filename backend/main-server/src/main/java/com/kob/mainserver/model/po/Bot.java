@@ -19,9 +19,7 @@ public class Bot {
 
     private String description;
 
-    private String content;
-
-    private Integer rating;
+    private String code;
 
     private Date createTime;
 

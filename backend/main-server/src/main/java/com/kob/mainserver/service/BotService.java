@@ -21,4 +21,6 @@ public interface BotService {
     void update(BotUpdateBO botUpdateBO);
 
     List<Bot> getAllBot();
+
+    Bot selectUserBotById(long botId, long userId);
 }

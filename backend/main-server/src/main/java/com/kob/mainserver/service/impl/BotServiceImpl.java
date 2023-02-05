@@ -32,10 +32,9 @@ import com.kob.mainserver.util.AuthenticationUtils;
 @Service
 public class BotServiceImpl implements BotService {
 
-    private static final Integer BOT_TITLE_MAX_LENGTH = 20;
-    private static final Integer BOT_DESC_MAX_LENGTH = 255;
-    private static final Integer BOT_CONTENT_MAX_LENGTH = 2000;
-    private static final Integer BOT_DEFAULT_RATING = 1500;
+    private static final int BOT_TITLE_MAX_LENGTH = 20;
+    private static final int BOT_DESC_MAX_LENGTH = 255;
+    private static final int BOT_CONTENT_MAX_LENGTH = 10000;
 
     @Autowired
     private BotMapper botMapper;
@@ -54,7 +53,6 @@ public class BotServiceImpl implements BotService {
         Bot bot = new Bot();
         BeanUtils.copyProperties(botAddBO, bot);
         bot.setUserId(userId);
-        bot.setRating(BOT_DEFAULT_RATING);
         bot.setCreateTime(now);
         bot.setUpdateTime(now);
 
@@ -79,9 +77,9 @@ public class BotServiceImpl implements BotService {
         Long botId = botUpdateBO.getBotId();
         String title = botUpdateBO.getTitle();
         String description = botUpdateBO.getDescription();
-        String content = botUpdateBO.getContent();
+        String code = botUpdateBO.getCode();
 
-        checkBotParam(title, description, content);
+        checkBotParam(title, description, code);
 
         Bot bot = botMapper.selectById(botId);
         if (bot == null) {
@@ -102,6 +100,13 @@ public class BotServiceImpl implements BotService {
         long userId = AuthenticationUtils.getUserId();
         queryWrapper.eq(Bot::getUserId, userId);
         return botMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Bot selectUserBotById(long botId, long userId) {
+        LambdaQueryWrapper<Bot> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Bot::getId, botId).eq(Bot::getUserId, userId);
+        return botMapper.selectOne(queryWrapper);
     }
 
     /**

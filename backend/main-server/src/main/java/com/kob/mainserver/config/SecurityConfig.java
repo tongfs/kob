@@ -1,6 +1,10 @@
 package com.kob.mainserver.config;
 
+import static com.kob.common.constant.Constants.GAME_NEXT_URI;
+import static com.kob.common.constant.Constants.GAME_START_URI;
 import static com.kob.common.constant.Constants.LOCALHOST;
+import static com.kob.common.constant.Constants.USER_LOGIN_URI;
+import static com.kob.common.constant.Constants.USER_REGISTER_URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,15 +28,16 @@ import com.kob.mainserver.filter.JwtAuthenticationTokenFilter;
  */
 @Configuration
 @EnableWebSecurity
-// TODO 更换弃用的类
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PERMIT_OUT_URI = {
-            "/user/login",
-            "/user/register"
+            USER_LOGIN_URI,
+            USER_REGISTER_URI
     };
+
     private static final String[] PERMIT_LOCAL_URI = {
-            "/game/start"
+            GAME_START_URI,
+            GAME_NEXT_URI
     };
 
     @Autowired
