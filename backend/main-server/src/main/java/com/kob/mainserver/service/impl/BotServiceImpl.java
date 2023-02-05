@@ -7,6 +7,7 @@ import static com.kob.common.enums.ErrorCode.BOT_NOT_EXIST;
 import static com.kob.common.enums.ErrorCode.BOT_TITLE_BLANK;
 import static com.kob.common.enums.ErrorCode.BOT_TITLE_TOO_LONG;
 import static com.kob.common.enums.ErrorCode.NO_BOT_PERMISSION;
+import static com.kob.common.enums.ErrorCode.REACH_LIMIT_NUMBER_OF_BOTS;
 
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,8 @@ public class BotServiceImpl implements BotService {
     private static final int BOT_TITLE_MAX_LENGTH = 20;
     private static final int BOT_DESC_MAX_LENGTH = 255;
     private static final int BOT_CONTENT_MAX_LENGTH = 10000;
+    private static final int BOT_MAX_NUMBER = 10;
+    private static final String BOT_DEFAULT_DESC = "这个用户很懒，什么都没有留下~";
 
     @Autowired
     private BotMapper botMapper;
@@ -42,16 +45,24 @@ public class BotServiceImpl implements BotService {
     @Override
     public void add(BotAddBO botAddBO) {
 
+        long count = selectCountByUserId(AuthenticationUtils.getUserId());
+        if (count >= BOT_MAX_NUMBER) {
+            throw new BotException(REACH_LIMIT_NUMBER_OF_BOTS);
+        }
+
         String title = botAddBO.getTitle();
         String description = botAddBO.getDescription();
-        String content = botAddBO.getContent();
+        String code = botAddBO.getCode();
 
-        checkBotParam(title, description, content);
+        checkBotParam(title, description, code);
 
         long userId = AuthenticationUtils.getUserId();
         Date now = new Date();
         Bot bot = new Bot();
         BeanUtils.copyProperties(botAddBO, bot);
+        if (StringUtils.isEmpty(bot.getDescription())) {
+            bot.setDescription(BOT_DEFAULT_DESC);
+        }
         bot.setUserId(userId);
         bot.setCreateTime(now);
         bot.setUpdateTime(now);
@@ -128,5 +139,14 @@ public class BotServiceImpl implements BotService {
         if (StringUtils.length(content) > BOT_CONTENT_MAX_LENGTH) {
             throw new BotException(BOT_CONTENT_TO_LONG);
         }
+    }
+
+    /**
+     * 根据userId查询Bot数量
+     */
+    private long selectCountByUserId(long userId) {
+        LambdaQueryWrapper<Bot> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Bot::getUserId, userId);
+        return botMapper.selectCount(queryWrapper);
     }
 }

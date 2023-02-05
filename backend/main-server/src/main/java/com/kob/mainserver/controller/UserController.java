@@ -2,6 +2,7 @@ package com.kob.mainserver.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import com.kob.common.exception.UserException;
 import com.kob.common.model.R;
 import com.kob.mainserver.model.bo.UserLoginBO;
 import com.kob.mainserver.model.bo.UserRegisterBO;
+import com.kob.mainserver.model.vo.PageResultVO;
 import com.kob.mainserver.model.vo.UserInfoVO;
 import com.kob.mainserver.model.vo.UserLoginVO;
 import com.kob.mainserver.service.UserService;
@@ -46,5 +48,11 @@ public class UserController {
     public R getInfo() {
         UserInfoVO userInfoVO = userService.getInfo();
         return R.ok(userInfoVO);
+    }
+
+    @GetMapping("/rank/{page}")
+    public R getRankList(@PathVariable long page) {
+        PageResultVO<UserInfoVO> rankList = userService.getRankList(page);
+        return R.ok(rankList);
     }
 }

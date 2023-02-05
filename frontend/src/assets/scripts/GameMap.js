@@ -56,24 +56,50 @@ export class GameMap extends AcGameObject {
 
     // 增加监听事件
     add_listening_events() {
-        // 聚焦到画布上
-        this.ctx.canvas.focus();
+        if (this.store.state.record.isRecord) {
+            // 在播放录像
+            let round = 0;
+            const steps1 = this.store.state.record.steps1;
+            const steps2 = this.store.state.record.steps2;
+            const loser = this.store.state.record.recordLoser;
+            const [snake1, snake2] = this.snakes;
+            const intervalId = setInterval(() => {
+                if (round >= steps1.length - 1) {
+                    if (loser === 1 || loser === 3) {
+                        snake1.die(steps1[round]);
+                    }
+                    if (loser === 2 || loser === 3) {
+                        snake2.die(steps2[round]);
+                    }
+                    this.store.commit('updatePlayingStatus', 'over')
+                    clearInterval(intervalId);
+                } else {
+                    snake1.set_direction(steps1[round]);
+                    snake2.set_direction(steps2[round]);
+                    round++;
+                }
+            }, 500);
+        } else {
+            /// 在对战
+            // 聚焦到画布上
+            this.ctx.canvas.focus();
 
-        // 监听按键
-        this.ctx.canvas.addEventListener('keydown', e => {
-            let d = -1;
-            if (e.key === 'w' || e.key === 'ArrowUp') d = 0;
-            else if (e.key === 'd' || e.key === 'ArrowRight') d = 1;
-            else if (e.key === 's' || e.key === 'ArrowDown') d = 2;
-            else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
+            // 监听按键
+            this.ctx.canvas.addEventListener('keydown', e => {
+                let d = -1;
+                if (e.key === 'w' || e.key === 'ArrowUp') d = 0;
+                else if (e.key === 'd' || e.key === 'ArrowRight') d = 1;
+                else if (e.key === 's' || e.key === 'ArrowDown') d = 2;
+                else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
 
-            if (d >= 0) {
-                this.store.state.pk.socket.send(JSON.stringify({
-                    event: 2,
-                    direction: d
-                }));
-            }
-        });
+                if (d >= 0) {
+                    this.store.state.pk.socket.send(JSON.stringify({
+                        event: 2,
+                        direction: d
+                    }));
+                }
+            });
+        }
     }
 
     // 创建障碍物

@@ -10,6 +10,7 @@ import static com.kob.common.constant.Constants.dx;
 import static com.kob.common.constant.Constants.dy;
 import static com.kob.common.enums.SocketResultType.MATCHING_SUCCESS;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ import com.kob.common.model.SocketResp;
 import com.kob.common.model.dto.GameSituation;
 import com.kob.common.model.dto.MatchRemoveDTO;
 import com.kob.common.model.dto.PlayerDTO;
+import com.kob.common.util.GsonUtils;
 import com.kob.mainserver.model.bean.Player;
 import com.kob.mainserver.model.bean.UserConnection;
 import com.kob.mainserver.model.po.Bot;
@@ -30,6 +32,7 @@ import com.kob.mainserver.model.vo.GameMatchResultVO;
 import com.kob.mainserver.service.BotService;
 import com.kob.mainserver.service.GameService;
 import com.kob.mainserver.service.RecordService;
+import com.kob.mainserver.service.UserService;
 import com.kob.mainserver.thread.Game;
 
 /**
@@ -49,6 +52,9 @@ public class GameServiceImpl implements GameService {
     private BotService botService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private Map<Long, UserConnection> users;
 
     @Override
@@ -65,7 +71,21 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void saveResult(Game game) {
-        Record record = new Record(game);
+        Player player1 = game.getPlayer1();
+        Player player2 = game.getPlayer2();
+        Record record = Record.builder()
+                .userId1(player1.getId())
+                .userId2(player2.getId())
+                .x1(player1.getSx())
+                .y1(player1.getSy())
+                .x2(player2.getSx())
+                .y2(player2.getSy())
+                .steps1(GsonUtils.toJson(player1.getSteps()))
+                .steps2(GsonUtils.toJson(player2.getSteps()))
+                .map(GsonUtils.toJson(game.getGameMap()))
+                .loserIdentity(game.getLoser())
+                .createTime(new Date())
+                .build();
         recordService.insert(record);
     }
 
@@ -85,7 +105,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void startGame(long playerId1, long botId1, long playerId2, long botId2) {
-        System.out.println("match success, player" + playerId1 + " vs player" + playerId2);
         createNewGame(users.get(playerId1), botId1, users.get(playerId2), botId2);
     }
 
@@ -118,7 +137,7 @@ public class GameServiceImpl implements GameService {
                 user1.getId(), ROWS - 2, 1, bot1 == null ? null : bot1.getCode(), conn1.getWebSocket());
         Player player2 = new Player(
                 user2.getId(), 1, COLS - 2, bot2 == null ? null : bot2.getCode(), conn2.getWebSocket());
-        Game game = new Game(gameMap, player1, player2, this);
+        Game game = new Game(gameMap, player1, player2, this, userService);
         conn1.setGame(game);
         conn2.setGame(game);
 

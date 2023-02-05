@@ -92,12 +92,11 @@ public class Player {
             }
         }
 
-        // 如果下一步合法，就更新蛇身体和下一步操作列表
+        // 如果下一步合法，就更新蛇身体
         body.offer(newHead);
         if (!game.isIncreasing()) {
             body.poll();
         }
-        steps.add(nextStep);
 
         return true;
     }

@@ -14,10 +14,18 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <router-link
+              :class="route_name == 'home' ? 'nav-link active' : 'nav-link'"
+              :to="{ name: 'home' }"
+            >
+              {{ homePage }}
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
               :class="route_name == 'pk_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'pk_index' }"
             >
-              对战
+              {{ game }}
             </router-link>
           </li>
           <li class="nav-item">
@@ -25,7 +33,7 @@
               :class="route_name == 'record_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'record_index' }"
             >
-              对局列表
+              {{ record }}
             </router-link>
           </li>
           <li class="nav-item">
@@ -33,7 +41,7 @@
               :class="route_name == 'ranklist_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'ranklist_index' }"
             >
-              排行榜
+              {{ rankingList }}
             </router-link>
           </li>
         </ul>
@@ -110,12 +118,18 @@ import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import router from '@/router';
+import { ref } from 'vue';
 
 export default {
     setup() {
         const route = useRoute();
         let route_name = computed(() => route.name);
 
+        const homePage = ref(' 主页 ');
+        const game = ref(' 对战 ');
+        const record = ref('对局记录');
+        const rankingList = ref(' 排行榜 ')
+      
         const store = useStore();
         const logout = () => {
             store.dispatch('logout');
@@ -125,7 +139,11 @@ export default {
 
         return {
             route_name,
-            logout
+            logout,
+            homePage,
+            game,
+            record,
+            rankingList
         }
     }
 }

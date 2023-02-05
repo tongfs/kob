@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeIndex from '@/views/HomeIndex'
 import PkIndex from '@/views/PkIndex'
 import RecordIndex from '@/views/RecordIndex'
+import RecordPlaying from '@/views/RecordPlaying'
 import RanklistIndex from '@/views/RanklistIndex'
 import UserSpace from '@/views/UserSpace'
 import UserLogin from '@/views/UserLogin'
@@ -17,7 +18,7 @@ const routes = [
     name: 'home',
     component: HomeIndex,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
@@ -25,7 +26,7 @@ const routes = [
     name: 'pk_index',
     component: PkIndex,
     meta: {
-      requireAuth: true,
+      requireAuth: true
     }
   },
   {
@@ -33,7 +34,15 @@ const routes = [
     name: 'record_index',
     component: RecordIndex,
     meta: {
-      requireAuth: true,
+      requireAuth: true
+    }
+  },
+  {
+    path: '/record/:recordId',
+    name: 'record_playing',
+    component: RecordPlaying,
+    meta: {
+      requireAuth: true
     }
   },
   {
@@ -41,7 +50,7 @@ const routes = [
     name: 'ranklist_index',
     component: RanklistIndex,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
@@ -49,7 +58,7 @@ const routes = [
     name: 'user_space',
     component: UserSpace,
     meta: {
-      requireAuth: true,
+      requireAuth: true
     }
   },
   {
@@ -57,7 +66,7 @@ const routes = [
     name: 'user_login',
     component: UserLogin,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
@@ -65,7 +74,7 @@ const routes = [
     name: 'user_register',
     component: UserRegister,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
@@ -73,7 +82,7 @@ const routes = [
     name: '404',
     component: NotFound,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
 ]

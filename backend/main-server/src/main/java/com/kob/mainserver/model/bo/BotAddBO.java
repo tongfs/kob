@@ -13,5 +13,5 @@ public class BotAddBO {
 
     private String description;
 
-    private String content;
+    private String code;
 }

@@ -3,6 +3,7 @@ package com.kob.mainserver.service;
 import com.kob.mainserver.model.bo.UserLoginBO;
 import com.kob.mainserver.model.bo.UserRegisterBO;
 import com.kob.mainserver.model.po.User;
+import com.kob.mainserver.model.vo.PageResultVO;
 import com.kob.mainserver.model.vo.UserInfoVO;
 import com.kob.mainserver.model.vo.UserLoginVO;
 
@@ -30,4 +31,14 @@ public interface UserService {
      * 通过userId获取User实例
      */
     User selectById(long userId);
+
+    /**
+     * 分页获取天梯排名
+     */
+    PageResultVO<UserInfoVO> getRankList(long page);
+
+    /**
+     * 游戏结束后更新玩家天梯分
+     */
+    void updateScore(int loser, long id1, long id2);
 }

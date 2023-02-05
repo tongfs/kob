@@ -30,7 +30,7 @@ public enum ErrorCode {
     BOT_CONTENT_TO_LONG(305, "Bot代码过长"),
     BOT_NOT_EXIST(306, "Bot不存在或已被删除"),
     NO_BOT_PERMISSION(307,"没有操作该Bot的权限"),
-
+    REACH_LIMIT_NUMBER_OF_BOTS(308, "Bot数量达到上限，无法添加"),
     ;
 
 

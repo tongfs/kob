@@ -22,6 +22,9 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    /**
+     * 接收玩家匹配结果
+     */
     @PostMapping("/start")
     public R start(@RequestBody MatchResultDTO matchResultDTO) {
         gameService.startGame(
@@ -30,6 +33,9 @@ public class GameController {
         return R.ok();
     }
 
+    /**
+     * 接收bot的下一步操作
+     */
     @PostMapping("/next")
     public R next(@RequestBody NextStepDTO nextStepDTO) {
         gameService.setNextStepByBot(nextStepDTO.getUserId(), nextStepDTO.getDirection());

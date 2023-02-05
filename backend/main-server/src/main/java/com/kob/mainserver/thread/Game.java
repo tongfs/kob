@@ -12,6 +12,7 @@ import com.kob.mainserver.model.bean.Player;
 import com.kob.mainserver.model.vo.GameNextStepVO;
 import com.kob.mainserver.model.vo.GameResultVO;
 import com.kob.mainserver.service.GameService;
+import com.kob.mainserver.service.UserService;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,11 +25,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class Game implements Runnable {
 
-    public Game(int[][] gameMap, Player player1, Player player2, GameService gameService) {
+    public Game(int[][] gameMap, Player player1, Player player2, GameService gameService, UserService userService) {
         this.gameMap = gameMap;
         this.player1 = player1;
         this.player2 = player2;
         this.gameService = gameService;
+        this.userService = userService;
     }
 
     private static final long STEP_INTERVAL = 300;
@@ -43,6 +45,7 @@ public class Game implements Runnable {
     private int round = 0;
     private int loser = 0;
     private GameService gameService;
+    private UserService userService;
 
     @Override
     public void run() {
@@ -63,6 +66,8 @@ public class Game implements Runnable {
             }
 
             if (readyForNextStep()) {
+                player1.getSteps().add(player1.getNextStep());
+                player2.getSteps().add(player2.getNextStep());
                 if (judge()) {
                     sendNextStep();
                 } else {
@@ -72,6 +77,8 @@ public class Game implements Runnable {
             } else {
                 if (player1.getNextStep() == DIRECTION_UNDEFINED) loser |= LOSER_1.getResultCode();
                 if (player2.getNextStep() == DIRECTION_UNDEFINED) loser |= LOSER_2.getResultCode();
+                player1.getSteps().add(player1.getNextStep());
+                player2.getSteps().add(player2.getNextStep());
                 sendGameResult();
                 break;
             }
@@ -169,8 +176,9 @@ public class Game implements Runnable {
      * 向玩家发送比赛结果
      */
     private void sendGameResult() {
-        // 在这之前先保存游戏结果
+        // 先持久化
         saveGameResult();
+        updateUserScore();
 
         GameResultVO gameResultVO = new GameResultVO(loser, player1.getNextStep(), player2.getNextStep());
         String resp = SocketResp.ok(GAME_RESULT, gameResultVO);
@@ -182,6 +190,13 @@ public class Game implements Runnable {
      */
     private void saveGameResult() {
         gameService.saveResult(this);
+    }
+
+    /**
+     * 更新天梯分
+     */
+    private void updateUserScore() {
+        userService.updateScore(loser, player1.getId(), player2.getId());
     }
 
 }

@@ -42,7 +42,6 @@ public class MatchPool implements Runnable {
      * 新增匹配玩家
      */
     public void add(PlayerDTO player) {
-        System.out.println("add player: " + player.getUserId() + " " + player.getScore());
         synchronized (this) {
             players.add(player);
         }
@@ -52,7 +51,6 @@ public class MatchPool implements Runnable {
      * 从匹配池中取消匹配
      */
     public void remove(long userId) {
-        System.out.println("remove player: " + userId);
         synchronized (this) {
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).getUserId() == userId) {

@@ -28,6 +28,9 @@ public class BotController {
     @Autowired
     private BotService botService;
 
+    /**
+     * 在个人空间中添加bot
+     */
     @PostMapping("/add")
     public R addBot(@RequestBody BotAddBO botAddBO) {
         try {
@@ -38,6 +41,9 @@ public class BotController {
         }
     }
 
+    /**
+     * 在个人空间中删除bot
+     */
     @PostMapping("/remove")
     public R deleteBot(@RequestBody BotRemoveBO botRemoveBO) {
         try {
@@ -50,6 +56,9 @@ public class BotController {
         }
     }
 
+    /**
+     * 更新bot信息
+     */
     @PostMapping("/update")
     public R updateBot(@RequestBody BotUpdateBO botUpdateBO) {
         try {
@@ -60,6 +69,9 @@ public class BotController {
         }
     }
 
+    /**
+     * 查找用户所有bot
+     */
     @GetMapping("/list")
     public R getAllBot() {
         List<Bot> bots = botService.getAllBot();
