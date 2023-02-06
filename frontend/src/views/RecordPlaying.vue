@@ -16,7 +16,8 @@ export default {
         TurnBackBoard
     },
     setup() {
-        const store = useStore();
+      const store = useStore();
+      store.commit('updatePlayingStatus', 'playing');
         if (!store.state.pk.gameMap) {
             router.push({ name: 'record_index' });
         }

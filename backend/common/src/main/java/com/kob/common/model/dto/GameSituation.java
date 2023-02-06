@@ -21,7 +21,7 @@ public class GameSituation {
     private long userId;
 
     /**
-     * 舌头坐标
+     * 蛇头坐标
      */
     private Cell head;
 

@@ -61,9 +61,11 @@ export default {
           const [snake1, snake2] = game.snakes;
           if (data.loser === 1 || data.loser === 3) {
             snake1.die(data.step1);
+            snake2.eye_direction = data.step2;
           }
           if (data.loser === 2 || data.loser === 3) {
             snake2.die(data.step2);
+            snake1.eye_direction = data.step1;
           }
           store.commit('updateLoser', data.loser);
         }
@@ -75,7 +77,11 @@ export default {
 
     onUnmounted(() => {
       socket.close();
-      store.commit('updateStatus', 'matching')
+      store.commit('updateStatus', 'matching');
+      store.commit('updateGame', {
+        identity: 0,
+        gameMap: null
+      });
     });
   }
 }

@@ -1,3 +1,21 @@
+/**
+ * 这里给出代码样例，你可以修改 getNextStep() 方法中的内容
+ * <p>
+ *  class GameSituation {
+ *      private long userId;
+ *      private Cell head;
+ *      private String botCode;
+ *      private String botCode;
+ *      private int[][] gameMap;
+ *      private int round;
+ *      private LinkedList<Cell> body1, body2;
+ *  }
+ * <p>
+ *  class Cell {
+ *      private int x, y;
+ *  }
+ */
+
 package com.kob.botserver.service.impl;
 
 import static com.kob.common.constant.Constants.COLS;
@@ -6,21 +24,42 @@ import static com.kob.common.constant.Constants.UP;
 import static com.kob.common.constant.Constants.dx;
 import static com.kob.common.constant.Constants.dy;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import com.kob.common.model.dto.Cell;
 import com.kob.common.model.dto.GameSituation;
+import com.kob.common.util.GsonUtils;
 
 /**
  * @author tongfs@stu.pku.edu.cn
  * @date 2023/2/4
  */
-public class RunningServiceImpl implements com.kob.botserver.service.RunningService {
+public class SupplierImpl implements java.util.function.Supplier<Integer> {
 
     @Override
-    public int getNextStep(GameSituation gameSituation) {
+    public Integer get() {
+        File file = new File(this.getClass().getName());
+        int result;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            result = getNextStep(GsonUtils.fromJson(br.readLine(), GameSituation.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = UP;
+        }
+        file.delete();
+        return result;
+    }
+
+    /**
+     * 获得下一步的具体方法
+     */
+    private int getNextStep(GameSituation gameSituation) {
         Cell head = gameSituation.getHead();
         int[][] gameMap = gameSituation.getGameMap();
         LinkedList<Cell> body1 = gameSituation.getBody1();

@@ -94,9 +94,6 @@ public class Player {
 
         // 如果下一步合法，就更新蛇身体
         body.offer(newHead);
-        if (!game.isIncreasing()) {
-            body.poll();
-        }
 
         return true;
     }

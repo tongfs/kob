@@ -140,6 +140,10 @@ public class Game implements Runnable {
      */
     private boolean judge() {
         round++;
+        if (!isIncreasing()) {
+            player1.getBody().poll();
+            player2.getBody().poll();
+        }
 
         // 判断下一步是否合法
         boolean isValid1 = player1.judge(player2.getBody(), this);

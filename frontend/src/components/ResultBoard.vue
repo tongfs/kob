@@ -4,19 +4,19 @@
       v-if="$store.state.pk.loser === 3"
       class="result-board-text"
     >
-      Draw
+      🤝Draw
     </div>
     <div
       v-else-if="$store.state.pk.loser === $store.state.pk.identity"
       class="result-board-text"
     >
-      Lose
+      💔Lose
     </div>
     <div
       v-else
       class="result-board-text"
     >
-      Win
+      🏆Win
     </div>
     <div class="col-12 result-board-btn">
       <button
@@ -73,7 +73,6 @@ div.result-board-text {
     color: white;
     font-size: 50px;
     font-weight: 600;
-    font-style: italic;
     padding-top: 5vh;
 }
 
