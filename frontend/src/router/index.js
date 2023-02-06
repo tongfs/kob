@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomeIndex from '@/views/HomeIndex'
-import PkIndex from '@/views/PkIndex'
-import RecordIndex from '@/views/RecordIndex'
-import RecordPlaying from '@/views/RecordPlaying'
-import RanklistIndex from '@/views/RanklistIndex'
-import UserSpace from '@/views/UserSpace'
-import UserLogin from '@/views/UserLogin'
-import UserRegister from '@/views/UserRegister'
-import NotFound from '@/views/NotFound'
+import HomeIndex from '@/views/home/HomeIndex'
+import GameIndex from '@/views/game/GameIndex'
+import RecordIndex from '@/views/record/RecordIndex'
+import RecordPlaying from '@/views/record/RecordPlaying'
+import UserRank from '@/views/user/UserRank'
+import UserSpace from '@/views/user/UserSpace'
+import UserLogin from '@/views/user/UserLogin'
+import UserRegister from '@/views/user/UserRegister'
+import NotFound from '@/views/error/NotFound'
 
 import store from '@/store/index'
 
@@ -22,9 +22,9 @@ const routes = [
     }
   },
   {
-    path: '/pk',
-    name: 'pk_index',
-    component: PkIndex,
+    path: '/game',
+    name: 'game_index',
+    component: GameIndex,
     meta: {
       requireAuth: true
     }
@@ -46,9 +46,9 @@ const routes = [
     }
   },
   {
-    path: '/ranklist',
-    name: 'ranklist_index',
-    component: RanklistIndex,
+    path: '/rank',
+    name: 'rank_index',
+    component: UserRank,
     meta: {
       requireAuth: false
     }

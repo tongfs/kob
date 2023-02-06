@@ -93,7 +93,7 @@ export class GameMap extends AcGameObject {
                 else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
 
                 if (d >= 0) {
-                    this.store.state.pk.socket.send(JSON.stringify({
+                    this.store.state.game.socket.send(JSON.stringify({
                         event: 2,
                         direction: d
                     }));

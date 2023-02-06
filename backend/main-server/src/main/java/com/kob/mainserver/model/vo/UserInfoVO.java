@@ -16,4 +16,10 @@ public class UserInfoVO {
     private String avatar;
 
     private Integer score;
+
+    private Integer winCnt;
+
+    private Integer loseCnt;
+
+    private Integer drawCnt;
 }

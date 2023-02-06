@@ -31,7 +31,7 @@ export class Snake extends AcGameObject {
         this.store = useStore();
         if (!this.store.state.record.isRecord) {
             this.factor = 0.7;
-            if (this.id === this.store.state.pk.identity) {
+            if (this.id === this.store.state.game.identity) {
                 this.factor = 0.90;
             }
         }

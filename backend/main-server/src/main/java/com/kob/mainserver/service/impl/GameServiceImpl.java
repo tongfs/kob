@@ -8,7 +8,12 @@ import static com.kob.common.constant.Constants.MATCH_REMOVE_URL;
 import static com.kob.common.constant.Constants.ROWS;
 import static com.kob.common.constant.Constants.dx;
 import static com.kob.common.constant.Constants.dy;
+import static com.kob.common.enums.GameResult.LOSER_1;
+import static com.kob.common.enums.GameResult.LOSER_2;
 import static com.kob.common.enums.SocketResultType.MATCHING_SUCCESS;
+import static com.kob.mainserver.constant.Constants.DRAW_SCORE;
+import static com.kob.mainserver.constant.Constants.LOSER_SCORE;
+import static com.kob.mainserver.constant.Constants.WINNER_SCORE;
 
 import java.util.Date;
 import java.util.Map;
@@ -73,6 +78,7 @@ public class GameServiceImpl implements GameService {
     public void saveResult(Game game) {
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
+        int loser = game.getLoser();
         Record record = Record.builder()
                 .userId1(player1.getId())
                 .userId2(player2.getId())
@@ -84,6 +90,14 @@ public class GameServiceImpl implements GameService {
                 .steps2(GsonUtils.toJson(player2.getSteps()))
                 .map(GsonUtils.toJson(game.getGameMap()))
                 .loserIdentity(game.getLoser())
+                .originalScore1(users.get(player1.getId()).getUser().getScore())
+                .getScore1(loser == LOSER_1.getResultCode() ? LOSER_SCORE
+                        : loser == LOSER_2.getResultCode() ? WINNER_SCORE
+                        : DRAW_SCORE)
+                .getScore2(loser == LOSER_1.getResultCode() ? WINNER_SCORE
+                        : loser == LOSER_2.getResultCode() ? LOSER_SCORE
+                        : DRAW_SCORE)
+                .originalScore2(users.get(player2.getId()).getUser().getScore())
                 .createTime(new Date())
                 .build();
         recordService.insert(record);

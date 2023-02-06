@@ -31,5 +31,13 @@ public class RecordVO {
 
     private int[][] gameMap;
 
+    private Integer originalScore1;
+
+    private Integer getScore1;
+
+    private Integer originalScore2;
+
+    private Integer getScore2;
+
     private Date createTime;
 }

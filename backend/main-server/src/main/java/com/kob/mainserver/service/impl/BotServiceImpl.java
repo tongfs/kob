@@ -120,6 +120,11 @@ public class BotServiceImpl implements BotService {
         return botMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public void addDefaultBot(Bot bot) {
+        botMapper.insert(bot);
+    }
+
     /**
      * 检查Bot的参数
      */

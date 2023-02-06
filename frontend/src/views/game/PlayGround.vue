@@ -5,19 +5,19 @@
 </template>
 
 <script>
-import GameMap from '@/components/GameMap.vue'
+import GameMap from '@/views/game/GameMap'
 
 export default {
-    components: {
-        GameMap
-    }
+  components: {
+    GameMap
+  }
 }
 </script>
 
 <style scoped>
 div.playground {
-    width: 60vw;
-    height: 70vh;
-    margin: 10vh auto;
+  width: 60vw;
+  height: 70vh;
+  margin: 10vh auto;
 }
 </style>

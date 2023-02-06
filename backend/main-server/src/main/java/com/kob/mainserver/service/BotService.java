@@ -23,4 +23,9 @@ public interface BotService {
     List<Bot> getAllBot();
 
     Bot selectUserBotById(long botId, long userId);
+
+    /**
+     * 新增一个默认bot
+     */
+    void addDefaultBot(Bot bot);
 }

@@ -1,15 +1,15 @@
 <template>
   <div>
-    <MatchPanel v-if="$store.state.pk.status === 'matching'" />
-    <PlayGround v-if="$store.state.pk.status === 'playing'" />
-    <ResultBoard v-if="$store.state.pk.loser" />
+    <MatchPanel v-if="$store.state.game.status === 'matching'" />
+    <PlayGround v-if="$store.state.game.status === 'playing'" />
+    <ResultBoard v-if="$store.state.game.loser" />
   </div>
 </template>
 
 <script>
-import PlayGround from '@/components/PlayGround';
-import MatchPanel from '@/components/MatchPanel';
-import ResultBoard from '@/components/ResultBoard';
+import PlayGround from '@/views/game/PlayGround';
+import MatchPanel from '@/views/game/MatchPanel';
+import ResultBoard from '@/views/game/ResultBoard';
 import { onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 
@@ -52,12 +52,12 @@ export default {
             store.commit('updateStatus', 'playing')
           }, 2000);
         } else if (resp.code === 2) {
-          const game = store.state.pk.game;
+          const game = store.state.game.game;
           const [snake1, snake2] = game.snakes;
           snake1.set_direction(data.step1);
           snake2.set_direction(data.step2);
         } else if (resp.code === 3) {
-          const game = store.state.pk.game;
+          const game = store.state.game.game;
           const [snake1, snake2] = game.snakes;
           if (data.loser === 1 || data.loser === 3) {
             snake1.die(data.step1);

@@ -1,10 +1,36 @@
 <template>
   <ContentField>
     <table class="table table-striped table-hover">
+      <colgroup>
+        <col width="10vw">
+        <col width="5vw">
+        <col width="5vw">
+        <col width="10vw">
+        <col width="5vw">
+        <col width="6vw">
+        <col width="6vw">
+        <col width="6vw">
+        <col width="15vw">
+        <col width="15vw">
+      </colgroup>
       <thead>
         <tr>
           <th>排名</th>
-          <th>玩家</th>
+          <th />
+          <th colspan="2">
+            玩家
+          </th>
+          <th />
+          <th>
+            🏆胜
+          </th>
+          <th>
+            💔负
+          </th>
+          <th>
+            🤝平
+          </th>
+          <th>胜率</th>
           <th>天梯分</th>
         </tr>
       </thead>
@@ -16,14 +42,32 @@
           <td>
             <span>{{ ++ranking }}</span>
           </td>
+          <td />
           <td>
             <img
               class="user-avatar"
               :src="user.avatar"
               alt="头像"
             >
-            &nbsp;
+          </td>
+          <td>
             <span>{{ user.username }}</span>
+          </td>
+          <td />
+          <td>
+            <span>{{ user.winCnt }}</span>
+          </td>
+          <td>
+            <span>{{ user.loseCnt }}</span>
+          </td>
+          <td>
+            <span>{{ user.drawCnt }}</span>
+          </td>
+          <td>
+            <span> {{
+              user.winCnt + user.loseCnt + user.drawCnt === 0 ? '-' :
+              ((user.winCnt / (user.winCnt + user.loseCnt + user.drawCnt)) * 100).toFixed(2) + '%'
+            }} </span>
           </td>
           <td>
             <span>{{ user.score }}</span>
@@ -99,6 +143,7 @@ export default {
           users.value = resp.data.data;
           total = resp.data.total;
           update_pages();
+          console.log(resp.data.data);
         }
       });
     }
@@ -142,6 +187,8 @@ export default {
 <style scoped>
 .table {
   text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
 }
 
 img.user-avatar {

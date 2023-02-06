@@ -58,6 +58,10 @@ public class RecordServiceImpl implements RecordService {
                             .steps2(GsonUtils.fromJson(record.getSteps2(), int[].class))
                             .loserIdentity(record.getLoserIdentity())
                             .gameMap(GsonUtils.fromJson(record.getMap(), int[][].class))
+                            .originalScore1(record.getOriginalScore1())
+                            .getScore1(record.getGetScore1())
+                            .originalScore2(record.getOriginalScore2())
+                            .getScore2(record.getGetScore2())
                             .createTime(record.getCreateTime())
                             .build();
                 })

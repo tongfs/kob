@@ -38,12 +38,12 @@
       <div class="col-4">
         <div class="user-avatar">
           <img
-            :src="$store.state.pk.opponent.avatar"
+            :src="$store.state.game.opponent.avatar"
             alt="头像"
           >
         </div>
         <div class="user-username">
-          {{ $store.state.pk.opponent.username }}
+          {{ $store.state.game.opponent.username }}
         </div>
       </div>
       <div
@@ -51,7 +51,7 @@
         style="text-align: center; margin-top: 15vh;"
       >
         <button
-          v-if="$store.state.pk.identity === 0"
+          v-if="$store.state.game.identity === 0"
           type="button"
           class="btn btn-warning btn-lg"
           @click="click_match_btn"
@@ -81,7 +81,7 @@ export default {
         })
 
         let bots = ref([]);
-        let selected = ref(store.state.pk.botId);
+        let selected = ref(store.state.game.botId);
 
         const click_match_btn = () => {
             let code = match_state.value.code;
@@ -91,7 +91,7 @@ export default {
                 msg: match_states_list[code]
             }
 
-            store.state.pk.socket.send(JSON.stringify({
+            store.state.game.socket.send(JSON.stringify({
                 // 传给后端时，0是取消，1是匹配
                 event: code,
                 botId: selected.value

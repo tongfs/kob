@@ -1,13 +1,13 @@
 <template>
   <div class="result-board">
     <div
-      v-if="$store.state.pk.loser === 3"
+      v-if="$store.state.game.loser === 3"
       class="result-board-text"
     >
       🤝Draw
     </div>
     <div
-      v-else-if="$store.state.pk.loser === $store.state.pk.identity"
+      v-else-if="$store.state.game.loser === $store.state.game.identity"
       class="result-board-text"
     >
       💔Lose

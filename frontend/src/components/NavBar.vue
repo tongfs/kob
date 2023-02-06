@@ -22,8 +22,8 @@
           </li>
           <li class="nav-item">
             <router-link
-              :class="route_name == 'pk_index' ? 'nav-link active' : 'nav-link'"
-              :to="{ name: 'pk_index' }"
+              :class="route_name == 'game_index' ? 'nav-link active' : 'nav-link'"
+              :to="{ name: 'game_index' }"
             >
               {{ game }}
             </router-link>
@@ -38,8 +38,8 @@
           </li>
           <li class="nav-item">
             <router-link
-              :class="route_name == 'ranklist_index' ? 'nav-link active' : 'nav-link'"
-              :to="{ name: 'ranklist_index' }"
+              :class="route_name == 'rank_index' ? 'nav-link active' : 'nav-link'"
+              :to="{ name: 'rank_index' }"
             >
               {{ rankingList }}
             </router-link>

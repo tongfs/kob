@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import PlayGround from '@/components/PlayGround';
-import TurnBackBoard from '@/components/TurnBackBoard';
+import PlayGround from '@/views/game/PlayGround';
+import TurnBackBoard from '@/views/record/TurnBackBoard';
 import { useStore } from 'vuex';
 import router from '@/router';
 export default {
@@ -18,7 +18,7 @@ export default {
     setup() {
       const store = useStore();
       store.commit('updatePlayingStatus', 'playing');
-        if (!store.state.pk.gameMap) {
+        if (!store.state.game.gameMap) {
             router.push({ name: 'record_index' });
         }
     }

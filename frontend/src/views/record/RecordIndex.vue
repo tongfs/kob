@@ -1,10 +1,30 @@
 <template>
   <ContentField>
     <table class="table table-striped table-hover">
+      <colgroup>
+        <col width="5vw">
+        <col width="5vw">
+        <col width="10vw">
+        <col width="10vw">
+        <col width="5vw">
+        <col width="5vw">
+        <col width="10vw">
+        <col width="10vw">
+        <col width="25vw">
+        <col width="25vw">
+      </colgroup>
       <thead>
         <tr>
-          <th>Player1</th>
-          <th>Player2</th>
+          <th />
+          <th colspan="2">
+            Player1
+          </th>
+          <th>天梯分</th>
+          <th />
+          <th colspan="2">
+            Player2
+          </th>
+          <th>天梯分</th>
           <th>对战时间</th>
           <th>操作</th>
         </tr>
@@ -14,23 +34,35 @@
           v-for="record in records"
           :key="record.id"
         >
+          <td />
           <td>
             <img
               class="user-avatar"
               :src="record.avatar1"
               alt="头像1"
             >
-            &nbsp;
+          </td>
+          <td>
             <span>{{ record.username1 }}</span>
           </td>
+          <td>
+            <span>{{ (record.originalScore1 + record.getScore1) + '(' + (record.getScore1 >= 0 ? '+' : '') +
+              record.getScore1 + ')' }}</span>
+          </td>
+          <td />
           <td>
             <img
               class="user-avatar"
               :src="record.avatar2"
               alt="头像2"
             >
-            &nbsp;
+          </td>
+          <td>
             <span>{{ record.username2 }}</span>
+          </td>
+          <td>
+            <span>{{ (record.originalScore2 + record.getScore2) + '(' + (record.getScore2 >= 0 ? '+' : '') +
+              record.getScore2 + ')' }}</span>
           </td>
           <td>{{ record.createTime }}</td>
           <td>
@@ -170,7 +202,7 @@ export default {
       records,
       play_record,
       pages,
-      click_page,
+      click_page
     }
   }
 }
@@ -179,6 +211,8 @@ export default {
 <style scoped>
 .table {
   text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
 }
 
 img.user-avatar {

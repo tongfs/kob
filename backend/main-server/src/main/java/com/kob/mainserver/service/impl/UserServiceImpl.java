@@ -10,7 +10,14 @@ import static com.kob.common.enums.ErrorCode.USER_ALREADY_EXISTS;
 import static com.kob.common.enums.GameResult.DRAW;
 import static com.kob.common.enums.GameResult.LOSER_1;
 import static com.kob.common.enums.GameResult.LOSER_2;
+import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_CODE;
+import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_DESC;
+import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_NAME;
+import static com.kob.mainserver.constant.Constants.DRAW_SCORE;
+import static com.kob.mainserver.constant.Constants.LOSER_SCORE;
+import static com.kob.mainserver.constant.Constants.WINNER_SCORE;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -33,10 +40,12 @@ import com.kob.mainserver.model.UserDetailsImpl;
 import com.kob.mainserver.model.bean.UserConnection;
 import com.kob.mainserver.model.bo.UserLoginBO;
 import com.kob.mainserver.model.bo.UserRegisterBO;
+import com.kob.mainserver.model.po.Bot;
 import com.kob.mainserver.model.po.User;
 import com.kob.mainserver.model.vo.PageResultVO;
 import com.kob.mainserver.model.vo.UserInfoVO;
 import com.kob.mainserver.model.vo.UserLoginVO;
+import com.kob.mainserver.service.BotService;
 import com.kob.mainserver.service.UserService;
 import com.kob.mainserver.util.AuthenticationUtils;
 import com.kob.mainserver.util.JwtUtils;
@@ -55,13 +64,12 @@ public class UserServiceImpl implements UserService {
             "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/c4c810b78db64a10b820985e85579e0d.jpeg",
             "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/d28e4ef0792f23362e5ca00e5681182d.jpg",
             "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/d50337e5759653aa27268847b1ca16e0.jpg",
-            "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/v2-c1b0fcddf7841b576549da07c41cbe8a_r.jpg",
-            "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/v2-f262a5a14d98ec31b59d1dc6893308e3_1440w.jpg",
+            "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/v2-c1b0fcddf7841b576549da07c41cbe8a_r" +
+                    ".jpg",
+            "https://youpeng-yp.oss-cn-chengdu.aliyuncs" +
+                    ".com/avatar/2023-01-01/v2-f262a5a14d98ec31b59d1dc6893308e3_1440w.jpg",
     };
     private static final int DEFAULT_SCORE = 5000;
-    private static final int WINNER_SCORE = 5;
-    private static final int LOSER_SCORE = -3;
-    private static final int DRAW_SCORE = -2;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -71,6 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private BotService botService;
 
     @Autowired
     private Map<Long, UserConnection> users;
@@ -111,6 +122,17 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(randomAvatar());
         user.setScore(DEFAULT_SCORE);
         userMapper.insert(user);
+
+        // 注册完成后自动生成一只bot
+        Bot bot = new Bot();
+        bot.setUserId(user.getId());
+        bot.setTitle(BOT_DEFAULT_NAME);
+        bot.setDescription(BOT_DEFAULT_DESC);
+        bot.setCode(BOT_DEFAULT_CODE);
+        Date now = new Date();
+        bot.setCreateTime(now);
+        bot.setUpdateTime(now);
+        botService.addDefaultBot(bot);
     }
 
     /**
@@ -178,17 +200,32 @@ public class UserServiceImpl implements UserService {
         User user2 = users.get(id2).getUser();
 
         if (loser == LOSER_1.getResultCode()) {
-            user1.setScore(user1.getScore() + LOSER_SCORE);
-            user2.setScore(user2.getScore() + WINNER_SCORE);
+            userLose(user1);
+            userWin(user2);
         } else if (loser == LOSER_2.getResultCode()) {
-            user1.setScore(user1.getScore() + WINNER_SCORE);
-            user2.setScore(user2.getScore() + LOSER_SCORE);
+            userLose(user2);
+            userWin(user1);
         } else if (loser == DRAW.getResultCode()) {
-            user1.setScore(user1.getScore() + DRAW_SCORE);
-            user2.setScore(user2.getScore() + DRAW_SCORE);
+            userDraw(user1);
+            userDraw(user2);
         }
 
         userMapper.updateById(user1);
         userMapper.updateById(user2);
+    }
+
+    private void userWin(User user) {
+        user.setScore(user.getScore() + WINNER_SCORE);
+        user.setWinCnt(user.getWinCnt() + 1);
+    }
+
+    private void userLose(User user) {
+        user.setScore(user.getScore() + LOSER_SCORE);
+        user.setLoseCnt(user.getLoseCnt() + 1);
+    }
+
+    private void userDraw(User user) {
+        user.setScore(user.getScore() + DRAW_SCORE);
+        user.setDrawCnt(user.getDrawCnt() + 1);
     }
 }
