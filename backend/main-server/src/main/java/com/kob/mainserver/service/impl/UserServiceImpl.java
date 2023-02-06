@@ -10,6 +10,7 @@ import static com.kob.common.enums.ErrorCode.USER_ALREADY_EXISTS;
 import static com.kob.common.enums.GameResult.DRAW;
 import static com.kob.common.enums.GameResult.LOSER_1;
 import static com.kob.common.enums.GameResult.LOSER_2;
+import static com.kob.mainserver.constant.Constants.BENBEN_ID;
 import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_CODE;
 import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_DESC;
 import static com.kob.mainserver.constant.Constants.BOT_DEFAULT_NAME;
@@ -208,6 +209,10 @@ public class UserServiceImpl implements UserService {
         } else if (loser == DRAW.getResultCode()) {
             userDraw(user1);
             userDraw(user2);
+        }
+
+        if (user2.getId() < 0) {
+            user2.setId(BENBEN_ID);
         }
 
         userMapper.updateById(user1);

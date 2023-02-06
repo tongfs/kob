@@ -20,8 +20,4 @@ public class PlayerDTO {
     private Integer score;
 
     private Integer waitingTime;
-
-    public void addWaitingTime() {
-        waitingTime++;
-    }
 }

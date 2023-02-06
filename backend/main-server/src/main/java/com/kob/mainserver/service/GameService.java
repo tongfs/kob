@@ -44,4 +44,9 @@ public interface GameService {
      * 发送请求获取bot下一步操作
      */
     void requestForNextStep(GameSituation gameSituation);
+
+    /**
+     * 笨笨在比赛完之后要将它从玩家中移出
+     */
+    void removeBenben(long id);
 }

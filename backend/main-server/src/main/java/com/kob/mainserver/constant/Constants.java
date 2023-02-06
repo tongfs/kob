@@ -145,4 +145,6 @@ public class Constants {
                     "        return res;\n" +
                     "    }\n" +
                     "}\n";
+
+    public static final long BENBEN_ID = 0;
 }

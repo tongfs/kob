@@ -16,9 +16,12 @@ public class MatchPool implements Runnable {
         this.matchService = matchService;
         new Thread(this).start();
     }
+
     private static final long MATCH_INTERVAL = 1000;
+    private static final long PLAYER_WAITING_LIMIT = 15;
 
     private List<PlayerDTO> players = new ArrayList<>();
+    private long botIdCounter = -1;
 
     private final MatchService matchService;
 
@@ -66,7 +69,7 @@ public class MatchPool implements Runnable {
      */
     private void increaseWaitingTime() {
         for (PlayerDTO player : players) {
-            player.addWaitingTime();
+            player.setWaitingTime(player.getWaitingTime() + 1);
         }
     }
 
@@ -81,9 +84,15 @@ public class MatchPool implements Runnable {
 
         for (int i = 0; i < n; i++) {
             if (used[i]) continue;
+            PlayerDTO player1 = players.get(i);
+            if (player1.getWaitingTime() == PLAYER_WAITING_LIMIT) {
+                used[i] = true;
+                PlayerDTO player2 = new PlayerDTO(botIdCounter--, 0L, 0, 0);
+                sendMatchResult(player1, player2);
+                continue;
+            }
             for (int j = i + 1; j < n; j++) {
                 if (used[j]) continue;
-                PlayerDTO player1 = players.get(i);
                 PlayerDTO player2 = players.get(j);
                 if (checkMatched(player1, player2)) {
                     used[i] = used[j] = true;

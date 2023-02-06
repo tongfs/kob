@@ -11,6 +11,7 @@ import static com.kob.common.constant.Constants.dy;
 import static com.kob.common.enums.GameResult.LOSER_1;
 import static com.kob.common.enums.GameResult.LOSER_2;
 import static com.kob.common.enums.SocketResultType.MATCHING_SUCCESS;
+import static com.kob.mainserver.constant.Constants.BENBEN_ID;
 import static com.kob.mainserver.constant.Constants.DRAW_SCORE;
 import static com.kob.mainserver.constant.Constants.LOSER_SCORE;
 import static com.kob.mainserver.constant.Constants.WINNER_SCORE;
@@ -81,7 +82,7 @@ public class GameServiceImpl implements GameService {
         int loser = game.getLoser();
         Record record = Record.builder()
                 .userId1(player1.getId())
-                .userId2(player2.getId())
+                .userId2(player2.getId() < 0 ? BENBEN_ID : player2.getId())
                 .x1(player1.getSx())
                 .y1(player1.getSy())
                 .x2(player2.getSx())
@@ -91,13 +92,13 @@ public class GameServiceImpl implements GameService {
                 .map(GsonUtils.toJson(game.getGameMap()))
                 .loserIdentity(game.getLoser())
                 .originalScore1(users.get(player1.getId()).getUser().getScore())
+                .originalScore2(users.get(player2.getId()).getUser().getScore())
                 .getScore1(loser == LOSER_1.getResultCode() ? LOSER_SCORE
                         : loser == LOSER_2.getResultCode() ? WINNER_SCORE
                         : DRAW_SCORE)
                 .getScore2(loser == LOSER_1.getResultCode() ? WINNER_SCORE
                         : loser == LOSER_2.getResultCode() ? LOSER_SCORE
                         : DRAW_SCORE)
-                .originalScore2(users.get(player2.getId()).getUser().getScore())
                 .createTime(new Date())
                 .build();
         recordService.insert(record);
@@ -119,7 +120,49 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void startGame(long playerId1, long botId1, long playerId2, long botId2) {
-        createNewGame(users.get(playerId1), botId1, users.get(playerId2), botId2);
+        UserConnection conn1 = users.get(playerId1);
+        UserConnection conn2 = users.get(playerId2);
+
+        User user1 = conn1.getUser();
+        User user2;
+        if (conn2 != null) {
+            user2 = conn2.getUser();
+        } else {
+            user2 = userService.selectById(BENBEN_ID);
+            user2.setId(playerId2);
+            conn2 = new UserConnection(null, user2, null);
+            users.put(playerId2, conn2);
+        }
+
+        Bot bot1 = botService.selectUserBotById(botId1, user1.getId());
+        Bot bot2;
+        if (playerId2 < 0) {
+            botId2 = playerId2 = BENBEN_ID;
+        }
+        bot2 = botService.selectUserBotById(botId2, playerId2);
+
+        // 创建
+        int[][] gameMap = getGameMap();
+        Player player1 = new Player(
+                user1.getId(), ROWS - 2, 1, bot1 == null ? null : bot1.getCode(), conn1.getWebSocket());
+        Player player2 = new Player(
+                user2.getId(), 1, COLS - 2, bot2 == null ? null : bot2.getCode(), conn2.getWebSocket());
+        Game game = new Game(gameMap, player1, player2, this, userService);
+        conn1.setGame(game);
+        conn2.setGame(game);
+
+        // 发送结果
+        GameMatchResultVO result1 = new GameMatchResultVO(
+                new GameMatchResultVO.Opponent(user2.getUsername(), user2.getAvatar()), 1, gameMap);
+        conn1.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result1));
+        if (conn2.getWebSocket() != null) {
+            GameMatchResultVO result2 = new GameMatchResultVO(
+                    new GameMatchResultVO.Opponent(user1.getUsername(), user1.getAvatar()), 2, gameMap);
+            conn2.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result2));
+        }
+
+        // 启动游戏
+        new Thread(game).start();
     }
 
     @Override
@@ -135,36 +178,9 @@ public class GameServiceImpl implements GameService {
         restTemplate.postForObject(BOT_ADD_URL, gameSituation, Object.class);
     }
 
-    /**
-     * 创建一局新游戏
-     */
-    private void createNewGame(UserConnection conn1, long botId1, UserConnection conn2, long botId2) {
-        User user1 = conn1.getUser();
-        User user2 = conn2.getUser();
-
-        Bot bot1 = botService.selectUserBotById(botId1, user1.getId());
-        Bot bot2 = botService.selectUserBotById(botId2, user2.getId());
-
-        // 创建
-        int[][] gameMap = getGameMap();
-        Player player1 = new Player(
-                user1.getId(), ROWS - 2, 1, bot1 == null ? null : bot1.getCode(), conn1.getWebSocket());
-        Player player2 = new Player(
-                user2.getId(), 1, COLS - 2, bot2 == null ? null : bot2.getCode(), conn2.getWebSocket());
-        Game game = new Game(gameMap, player1, player2, this, userService);
-        conn1.setGame(game);
-        conn2.setGame(game);
-
-        // 发送结果
-        GameMatchResultVO result1 = new GameMatchResultVO(
-                new GameMatchResultVO.Opponent(user2.getUsername(), user2.getAvatar()), 1, gameMap);
-        GameMatchResultVO result2 = new GameMatchResultVO(
-                new GameMatchResultVO.Opponent(user1.getUsername(), user1.getAvatar()), 2, gameMap);
-        conn1.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result1));
-        conn2.getWebSocket().sendMessage(SocketResp.ok(MATCHING_SUCCESS, result2));
-
-        // 启动游戏
-        new Thread(game).start();
+    @Override
+    public void removeBenben(long id) {
+        users.remove(id);
     }
 
     /**

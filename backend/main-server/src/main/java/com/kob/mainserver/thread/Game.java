@@ -173,7 +173,9 @@ public class Game implements Runnable {
      */
     private void batchSendMessage(String message) {
         player1.getSocket().sendMessage(message);
-        player2.getSocket().sendMessage(message);
+        if (player2.getId() > 0) {
+            player2.getSocket().sendMessage(message);
+        }
     }
 
     /**
@@ -187,6 +189,10 @@ public class Game implements Runnable {
         GameResultVO gameResultVO = new GameResultVO(loser, player1.getNextStep(), player2.getNextStep());
         String resp = SocketResp.ok(GAME_RESULT, gameResultVO);
         batchSendMessage(resp);
+
+        if (player2.getId() < 0) {
+            gameService.removeBenben(player2.getId());
+        }
     }
 
     /**
