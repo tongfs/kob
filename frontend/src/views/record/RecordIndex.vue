@@ -43,7 +43,9 @@
             >
           </td>
           <td>
-            <span>{{ record.username1 }}</span>
+            <span
+              :class="$store.state.user.id === record.userId1 ? 'me' : 'not-me'"
+            >{{ record.username1 }}</span>
           </td>
           <td>
             <span>{{ (record.originalScore1 + record.getScore1) + '(' + (record.getScore1 >= 0 ? '+' : '') +
@@ -58,7 +60,9 @@
             >
           </td>
           <td>
-            <span>{{ record.username2 }}</span>
+            <span
+              :class="$store.state.user.id === record.userId2 ? 'me' : 'not-me'"
+            >{{ record.username2 }}</span>
           </td>
           <td>
             <span>{{ (record.originalScore2 + record.getScore2) + '(' + (record.getScore2 >= 0 ? '+' : '') +
@@ -144,6 +148,7 @@ export default {
           records.value = resp.data.data;
           total = resp.data.total;
           update_pages();
+          console.log(store.state.user.username);
         }
       });
     }
@@ -222,5 +227,9 @@ img.user-avatar {
 
 .pagination {
   float: right;
+}
+
+.me {
+  font-weight: bold;
 }
 </style>

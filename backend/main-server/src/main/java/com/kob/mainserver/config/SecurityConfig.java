@@ -1,9 +1,11 @@
 package com.kob.mainserver.config;
 
 import static com.kob.common.constant.Constants.GAME_NEXT_URI;
+import static com.kob.common.constant.Constants.GAME_RECORD_URI;
 import static com.kob.common.constant.Constants.GAME_START_URI;
 import static com.kob.common.constant.Constants.LOCALHOST;
 import static com.kob.common.constant.Constants.USER_LOGIN_URI;
+import static com.kob.common.constant.Constants.USER_RANK_URI;
 import static com.kob.common.constant.Constants.USER_REGISTER_URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PERMIT_OUT_URI = {
             USER_LOGIN_URI,
-            USER_REGISTER_URI
+            USER_REGISTER_URI,
+            USER_RANK_URI,
+            GAME_RECORD_URI,
     };
 
     private static final String[] PERMIT_LOCAL_URI = {

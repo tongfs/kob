@@ -13,6 +13,8 @@ public class Constants {
 
     public static final String USER_LOGIN_URI = "/user/login";
     public static final String USER_REGISTER_URI = "/user/register";
+    public static final String USER_RANK_URI = "/user/rank/*";
+    public static final String GAME_RECORD_URI = "/record/list/*";
 
     public static final String MATCH_ADD_URI = "/match/add";
     public static final String MATCH_ADD_URL = MATCH_SERVER + MATCH_ADD_URI;

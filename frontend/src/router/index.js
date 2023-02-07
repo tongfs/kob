@@ -34,7 +34,7 @@ const routes = [
     name: 'record_index',
     component: RecordIndex,
     meta: {
-      requireAuth: true
+      requireAuth: false
     }
   },
   {
@@ -42,7 +42,7 @@ const routes = [
     name: 'record_playing',
     component: RecordPlaying,
     meta: {
-      requireAuth: true
+      requireAuth: false
     }
   },
   {

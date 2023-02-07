@@ -15,9 +15,13 @@ public class RecordVO {
 
     private long id;
 
+    private long userId1;
+
     private String username1;
 
     private String avatar1;
+
+    private long userId2;
 
     private String username2;
 

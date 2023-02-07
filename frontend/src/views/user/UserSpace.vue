@@ -380,4 +380,9 @@ span {
 div.msg {
   color: red;
 }
+
+.table {
+  text-align: center;
+  vertical-align: middle;
+}
 </style>

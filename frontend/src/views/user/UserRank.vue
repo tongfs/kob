@@ -66,7 +66,7 @@
           <td>
             <span> {{
               user.winCnt + user.loseCnt + user.drawCnt === 0 ? '-' :
-              ((user.winCnt / (user.winCnt + user.loseCnt + user.drawCnt)) * 100).toFixed(2) + '%'
+              ((user.winCnt / (user.winCnt + user.loseCnt + user.drawCnt)) * 100).toFixed(0) + '%'
             }} </span>
           </td>
           <td>

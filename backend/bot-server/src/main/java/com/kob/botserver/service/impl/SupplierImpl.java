@@ -1,40 +1,15 @@
 /**
  * 这里给出代码样例，你可以修改 getNextStep() 方法中的内容
- * <p>
- *  class GameSituation {
- *      private long userId;
- *      private Cell head;
- *      private String botCode;
- *      private String botCode;
- *      private int[][] gameMap;
- *      private int round;
- *      private LinkedList<Cell> body1, body2;
- *  }
- * <p>
- *  class Cell {
- *      private int x, y;
- *  }
  */
 
 package com.kob.botserver.service.impl;
-
-import static com.kob.common.constant.Constants.COLS;
-import static com.kob.common.constant.Constants.ROWS;
-import static com.kob.common.constant.Constants.UP;
-import static com.kob.common.constant.Constants.dx;
-import static com.kob.common.constant.Constants.dy;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
-import com.kob.common.model.dto.Cell;
-import com.kob.common.model.dto.GameSituation;
-import com.kob.common.util.GsonUtils;
 
 /**
  * @author tongfs@stu.pku.edu.cn
@@ -42,76 +17,85 @@ import com.kob.common.util.GsonUtils;
  */
 public class SupplierImpl implements java.util.function.Supplier<Integer> {
 
+    private static final int[] dx = {-1, 0, 1, 0};
+    private static final int[] dy = {0, 1, 0, -1};
+
     @Override
     public Integer get() {
         File file = new File(this.getClass().getName());
         int result;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            result = getNextStep(GsonUtils.fromJson(br.readLine(), GameSituation.class));
+            result = getNextStep(br.readLine());
         } catch (IOException e) {
             e.printStackTrace();
-            result = UP;
+            result = 1;
         }
         file.delete();
         return result;
     }
 
+
     /**
      * 获得下一步的具体方法
      */
-    private int getNextStep(GameSituation gameSituation) {
-        Cell head = gameSituation.getHead();
-        int[][] gameMap = gameSituation.getGameMap();
-        LinkedList<Cell> body1 = gameSituation.getBody1();
-        LinkedList<Cell> body2 = gameSituation.getBody2();
+    private int getNextStep(String serializedStr) {
+        String[] splits = serializedStr.split("#");
 
-        if (!isIncreasing(gameSituation.getRound())) {
-            body1.poll();
-            body2.poll();
-        }
+        String[] head = splits[0].split(",");
+        int headX = Integer.parseInt(head[0]);
+        int headY = Integer.parseInt(head[1]);
 
-        updateMap(gameMap, body1, body2);
+        String[] scale = splits[1].split(",");
+        int rows = Integer.parseInt(scale[0]);
+        int cols = Integer.parseInt(scale[1]);
 
-        int[] directions = new int[4];
-        int cnt = 0;
-        for (int i = 0; i < 4; i++) {
-            int a = head.getX() + dx[i];
-            int b = head.getY() + dy[i];
-            if (a >= 0 && a < ROWS && b >= 0 && b < COLS && gameMap[a][b] == 0) {
-                cnt++;
-                directions[i] = 1;
+        String gameMapStr = splits[2];
+        int[][] gameMap = new int[rows][cols];
+        for (int i = 0, k = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++, k++) {
+                if (gameMapStr.charAt(k) == '1') {
+                    gameMap[i][j] = 1;
+                }
             }
         }
 
-        if (cnt == 0) return UP;
+        int[] directions = new int[4];
+        int maxDirections = -1;
+        for (int i = 0; i < 4; i++) {
+            int a = headX + dx[i];
+            int b = headY + dy[i];
+            if (a >= 0 && a < rows && b >= 0 && b < cols && gameMap[a][b] == 0) {
+                directions[i] = explore(a, b, gameMap);
+            } else {
+                directions[i] = -1;
+            }
+            maxDirections = Math.max(maxDirections, directions[i]);
+        }
+
+        if (maxDirections == -1) return 0;
 
         Random random = new Random();
         while (true) {
             int d = random.nextInt(4);
-            if (directions[d] == 1) {
+            if (directions[d] == maxDirections) {
                 return d;
             }
         }
     }
 
     /**
-     * 当前回合蛇的身体是否要增长
+     * 探索一下如果下一步走 (x, y)，则再下一步有多少个可选位置，将结果记录在
      */
-    private boolean isIncreasing(int round) {
-        if (round <= 5) return true;
-        if (round <= 11) return (round & 1) == 1;
-        return round % 3 == 2;
-    }
-
-    /**
-     * 更新地图
-     */
-    private void updateMap(int[][] gameMap, List<Cell> body1, List<Cell> body2) {
-        for (Cell cell : body1) {
-            gameMap[cell.getX()][cell.getY()] = 1;
+    private int explore(int x, int y, int[][] gameMap) {
+        int rows = gameMap.length;
+        int cols = gameMap[0].length;
+        int res = 0;
+        for (int i = 0; i < 4; i++) {
+            int a = x + dx[i], b = y + dy[i];
+            if (a >= 0 && a < rows && b >= 0 && b < cols && gameMap[a][b] == 0) {
+                res++;
+            }
         }
-        for (Cell cell : body2) {
-            gameMap[cell.getX()][cell.getY()] = 1;
-        }
+        return res;
     }
 }

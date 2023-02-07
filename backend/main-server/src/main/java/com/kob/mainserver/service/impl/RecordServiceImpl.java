@@ -50,8 +50,10 @@ public class RecordServiceImpl implements RecordService {
                     User user2 = userService.selectById(record.getUserId2());
                     return RecordVO.builder()
                             .id(record.getId())
+                            .userId1(user1.getId())
                             .username1(decorateUsername(record.getLoserIdentity(), user1.getUsername(), 1))
                             .avatar1(user1.getAvatar())
+                            .userId2(user2.getId())
                             .username2(decorateUsername(record.getLoserIdentity(), user2.getUsername(), 2))
                             .avatar2(user2.getAvatar())
                             .steps1(GsonUtils.fromJson(record.getSteps1(), int[].class))

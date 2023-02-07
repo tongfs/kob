@@ -30,18 +30,18 @@
           </li>
           <li class="nav-item">
             <router-link
-              :class="route_name == 'record_index' ? 'nav-link active' : 'nav-link'"
-              :to="{ name: 'record_index' }"
-            >
-              {{ record }}
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
               :class="route_name == 'rank_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'rank_index' }"
             >
               {{ rankingList }}
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              :class="route_name == 'record_index' ? 'nav-link active' : 'nav-link'"
+              :to="{ name: 'record_index' }"
+            >
+              {{ record }}
             </router-link>
           </li>
         </ul>
@@ -125,7 +125,7 @@ export default {
         const route = useRoute();
         let route_name = computed(() => route.name);
 
-        const homePage = ref(' 主页 ');
+        const homePage = ref(' 首页 ');
         const game = ref(' 对战 ');
         const record = ref('对局记录');
         const rankingList = ref(' 排行榜 ')
