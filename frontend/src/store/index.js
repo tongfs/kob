@@ -1,10 +1,12 @@
-import { createStore } from 'vuex';
-import user from './user';
-import pk from './pk';
-import record from './record';
+import { createStore } from 'vuex'
+import ModuleUser from './user'
+import ModuleGame from './game'
+import ModuleRecord from './record'
 
 export default createStore({
   state: {
+    url: 'http://localhost:3000',
+    ws: 'ws://localhost:3000/websocket'
   },
   getters: {
   },
@@ -13,8 +15,8 @@ export default createStore({
   actions: {
   },
   modules: {
-    user: user,
-    pk: pk,
-    record: record,
+    user: ModuleUser,
+    game: ModuleGame,
+    record: ModuleRecord
   }
 })

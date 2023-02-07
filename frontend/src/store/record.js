@@ -1,9 +1,10 @@
 export default {
     state: {
         isRecord: false,
-        steps1: '',
-        steps2: '',
+        steps1: [],
+        steps2: [],
         recordLoser: 0,
+        playingStatus: 'playing'
     },
     getters: {
     },
@@ -18,9 +19,11 @@ export default {
         updateRecordLoser(state, loser) {
             state.recordLoser = loser;
         },
+        updatePlayingStatus(state, status) {
+            state.playingStatus = status;
+        }
     },
     actions: {
-
     },
     modules: {
     }

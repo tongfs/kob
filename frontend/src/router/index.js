@@ -1,29 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import PkIndex from '@/views/pk/PkIndex'
+import HomeIndex from '@/views/home/HomeIndex'
+import GameIndex from '@/views/game/GameIndex'
 import RecordIndex from '@/views/record/RecordIndex'
 import RecordPlaying from '@/views/record/RecordPlaying'
-import RanklistIndex from '@/views/ranklist/RanklistIndex'
-import UserBotIndex from '@/views/user/bot/UserBotIndex'
+import UserRank from '@/views/user/UserRank'
+import UserSpace from '@/views/user/UserSpace'
+import UserLogin from '@/views/user/UserLogin'
+import UserRegister from '@/views/user/UserRegister'
 import NotFound from '@/views/error/NotFound'
-import UserAccountLogin from '@/views/user/account/UserAccountLogin'
-import UserAccountRegister from '@/views/user/account/UserAccountRegister'
+
 import store from '@/store/index'
 
 const routes = [
   {
     path: '/',
     name: 'home',
+    component: HomeIndex,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
-    path: '/pk',
-    name: 'pk_index',
-    component: PkIndex,
+    path: '/game',
+    name: 'game_index',
+    component: GameIndex,
     meta: {
-      requireAuth: true,
+      requireAuth: true
     }
   },
   {
@@ -31,7 +34,7 @@ const routes = [
     name: 'record_index',
     component: RecordIndex,
     meta: {
-      requireAuth: true,
+      requireAuth: false
     }
   },
   {
@@ -39,39 +42,39 @@ const routes = [
     name: 'record_playing',
     component: RecordPlaying,
     meta: {
-      requireAuth: true,
+      requireAuth: false
     }
   },
   {
-    path: '/ranklist',
-    name: 'ranklist_index',
-    component: RanklistIndex,
+    path: '/rank',
+    name: 'rank_index',
+    component: UserRank,
     meta: {
-      requireAuth: true,
+      requireAuth: false
     }
   },
   {
-    path: '/user/bot',
-    name: 'user_bot_index',
-    component: UserBotIndex,
+    path: '/user/space',
+    name: 'user_space',
+    component: UserSpace,
     meta: {
-      requireAuth: true,
+      requireAuth: true
     }
   },
   {
-    path: '/user/account/login',
-    name: 'user_account_login',
-    component: UserAccountLogin,
+    path: '/user/login',
+    name: 'user_login',
+    component: UserLogin,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
-    path: '/user/account/register',
-    name: 'user_account_register',
-    component: UserAccountRegister,
+    path: '/user/register',
+    name: 'user_register',
+    component: UserRegister,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
   {
@@ -79,7 +82,7 @@ const routes = [
     name: '404',
     component: NotFound,
     meta: {
-      requireAuth: false,
+      requireAuth: false
     }
   },
 ]
@@ -90,36 +93,31 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-
-  let flag = true;  // 登录是否有效
   const jwt_token = localStorage.getItem('jwt_token');
 
   if (jwt_token) {
     store.commit('updateToken', jwt_token);
+    // 判断jwt是否有效
     store.dispatch('getInfo', {
       success() {
+        next();
       },
       error() {
-        localStorage.removeItem('jwt_token');
-        store.commit('logout');
-        alert("身份验证无效，请重新登录");
-        router.push({ name: 'user_account_login' })
+        store.dispatch('logout');
+        no_token_router(to, next, "登录验证过期，请重新登录")
       }
     });
   } else {
-    flag = false;
-  }
-
-  if (to.meta.requireAuth && !store.state.user.is_login) {
-    if (flag) {
-      next();
-    } else {
-      alert("请先进行登录");
-      next( {name: 'user_account_login'} );
-    }
-  } else {
-    next();
+    no_token_router(to, next, "请先进行登录")
   }
 })
+
+const no_token_router = (to, next, msg) => {
+  if (!to.meta.requireAuth) next();
+  else {
+    alert(msg);
+    next({ name: 'user_login' });
+  }
+}
 
 export default router

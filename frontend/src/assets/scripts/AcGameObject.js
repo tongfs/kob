@@ -2,20 +2,24 @@ const AC_GAME_OBJECTS = [];
 
 export class AcGameObject {
     constructor() {
-        AC_GAME_OBJECTS.push(this); // 将自己加入到对象列表中
+        // 将自己加入到对象列表中
+        AC_GAME_OBJECTS.push(this);
 
         this.timedelta = 0;
         this.has_called_start = false;
     }
 
     // 只执行一次
-    start() {}
+    start() {
+    }
 
     // 每一帧执行一次，除了第一帧之外
-    update() {}
+    update() {
+    }
 
     // 删除之前执行
-    on_destroy() {}
+    on_destroy() {
+    }
 
     destroy() {
         this.on_destroy();
@@ -30,7 +34,9 @@ export class AcGameObject {
     }
 }
 
+// 上一次执行的时刻
 let last_timestamp;
+
 const step = (timestamp) => {
     for (let obj of AC_GAME_OBJECTS) {
         if (!obj.has_called_start) {

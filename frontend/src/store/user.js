@@ -1,13 +1,13 @@
-import router from '@/router';
 import $ from 'jquery'
+import store from './index'
 
 export default {
     state: {
         id: '',
         username: '',
-        profile: '',
+        avatar: '',
         token: '',
-        is_login: false,
+        is_login: false
     },
     getters: {
     },
@@ -15,33 +15,34 @@ export default {
         updateUser(state, user) {
             state.id = user.id;
             state.username = user.username;
-            state.profile = user.profile;
-            state.is_login = user.is_login
+            state.avatar = user.avatar;
+            state.is_login = user.is_login;
         },
         updateToken(state, token) {
-            state.token = token
+            state.token = token;
         },
         logout(state) {
             state.id = '';
             state.username = '';
-            state.profile = '';
+            state.avatar = '';
             state.token = '';
             state.is_login = false;
-        },
+        }
     },
     actions: {
         login(context, data) {
             $.ajax({
-                url: 'http://120.46.137.137:3000/api/user/account/token',
+                url: store.state.url + '/user/login',
                 type: 'post',
-                data: {
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({
                     username: data.username,
                     password: data.password
-                },
+                }),
                 success(resp) {
-                    if (resp.msg === 'success') {
-                        localStorage.setItem('jwt_token', resp.token);
-                        context.commit('updateToken', resp.token);  // todo 这个地方为什么和下面不一样？
+                    if (resp.code === 0) {
+                        localStorage.setItem('jwt_token', resp.data.token);
+                        context.commit('updateToken', resp.data.token);
                         data.success(resp)
                     } else {
                         data.error(resp)
@@ -55,24 +56,25 @@ export default {
 
         getInfo(context, data) {
             $.ajax({
-                url: 'http://120.46.137.137:3000/api/user/account/info',
+                url: store.state.url + '/user/info',
                 type: 'get',
                 headers: {
                     Authorization: 'Bearer ' + context.state.token
                 },
                 success(resp) {
-                    if (resp.msg === 'success') {
+                    if (resp.code === 0) {
                         context.commit('updateUser', {
-                            // 不是很懂
-                            ...resp,
+                            ...resp.data,
                             is_login: true,
                         });
                         data.success(resp)
                     } else {
+                        context.commit('logout');
                         data.error(resp)
                     }
                 },
                 error(resp) {
+                    context.commit('logout');
                     data.error(resp)
                 }
             })
@@ -81,7 +83,6 @@ export default {
         logout(context) {
             localStorage.removeItem('jwt_token');
             context.commit('logout');
-            router.push({ name: 'home' })
         }
     },
     modules: {

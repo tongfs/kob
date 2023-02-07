@@ -1,14 +1,14 @@
+import { useStore } from "vuex";
 import { AcGameObject } from "./AcGameObject";
 import { Cell } from "./Cell";
-import { useStore } from "vuex";
 
 export class Snake extends AcGameObject {
-    constructor(info, gameMap) {
+    constructor(info, gamemap) {
         super();
 
         this.id = info.id;
         this.color = info.color;
-        this.gameMap = gameMap;
+        this.gamemap = gamemap;
 
         this.body = [new Cell(info.r, info.c)];  // 存放蛇的身体, body[0]存放蛇头
 
@@ -20,10 +20,10 @@ export class Snake extends AcGameObject {
         this.dr = [-1, 0, 1, 0];    // 行的偏移量
         this.dc = [0, 1, 0, -1];    // 列的偏移量
 
-        this.turns = 0;
+        this.round = 0;
         this.eps = 1e-2;
 
-        this.eye_direction = this.id === 0 ? 0 : 2;
+        this.eye_direction = this.id === 1 ? 0 : 2;
         this.eye_dx = [[-1, 1], [1, 1], [1, -1], [-1, -1]];
         this.eye_dy = [[-1, -1], [-1, 1], [1, 1], [1, -1]];
 
@@ -31,13 +31,13 @@ export class Snake extends AcGameObject {
         this.store = useStore();
         if (!this.store.state.record.isRecord) {
             this.factor = 0.7;
-            if (this.id + 1 === this.store.state.pk.identity) {
+            if (this.id === this.store.state.game.identity) {
                 this.factor = 0.90;
             }
         }
     }
 
-    start() {}
+    start() { }
 
     update() {
         if (this.status === 'move')
@@ -47,8 +47,8 @@ export class Snake extends AcGameObject {
 
     render() {
         const factor = this.factor;
-        const L = this.gameMap.L;
-        const ctx = this.gameMap.ctx;
+        const L = this.gamemap.L;
+        const ctx = this.gamemap.ctx;
 
         ctx.fillStyle = this.color;
         for (const cell of this.body) {
@@ -66,6 +66,7 @@ export class Snake extends AcGameObject {
             }
         }
 
+        // 画眼睛
         ctx.fillStyle = '#000000';
         for (let i = 0; i < 2; i++) {
             const eye_x = (this.body[0].x + this.eye_dx[this.eye_direction][i] * 0.2) * L;
@@ -79,15 +80,14 @@ export class Snake extends AcGameObject {
     set_direction(d) {
         this.direction = d;
     }
-    
     // 将蛇的状态变为走下一步
     next_step() {
         const d = this.eye_direction = this.direction;
         this.next_cell = new Cell(this.body[0].r + this.dr[d], this.body[0].c + this.dc[d]);
-        
+
         this.direction = -1;    // 清空操作
         this.status = 'move';
-        this.turns++;
+        this.round++;
 
         const k = this.body.length;
         for (let i = k; i > 0; i--) {
@@ -95,12 +95,14 @@ export class Snake extends AcGameObject {
         }
     }
 
+    // 蛇每一帧的移动
     move() {
         const dx = this.next_cell.x - this.body[0].x;
         const dy = this.next_cell.y - this.body[0].y;
         const d = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (d < this.eps) {
+            // 如果已经在误差范围内
             this.body[0] = this.next_cell;
             this.next_cell = null;
             this.status = 'idle';
@@ -126,13 +128,18 @@ export class Snake extends AcGameObject {
 
     // 判断当前回合蛇的长度是否要增加
     check_increasing() {
-        if (this.turns <= 10) return true;
-        if (this.turns % 3 === 1) return true;
+        if (this.round <= 5) return true;
+        if (this.round <= 11) return this.round & 1;
+        if (this.round % 3 === 2) return true;
         return false;
     }
 
-    die() {
+    // 设置蛇的死亡状态
+    die(step) {
         this.status = 'die';
         this.color = '#FFFFFF';
+        if (step !== -1) {
+            this.eye_direction = step;
+        }
     }
 }

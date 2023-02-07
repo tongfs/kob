@@ -9,17 +9,17 @@ export class GameMap extends AcGameObject {
 
         this.ctx = ctx;
         this.parent = parent;
-        this.gameMap = gameMap;
         this.L = 0;
 
-        this.rows = 13;
-        this.cols = 14;
+        this.rows = gameMap.length;
+        this.cols = gameMap[0].length;
 
+        this.gameMap = gameMap;
         this.walls = [];
 
         this.snakes = [
-            new Snake({ id: 0, color: '#4876EC', r: this.rows - 2, c: 1 }, this),
-            new Snake({ id: 1, color: '#F94848', r: 1, c: this.cols - 2 }, this)
+            new Snake({ id: 1, color: '#4876EC', r: this.rows - 2, c: 1 }, this),
+            new Snake({ id: 2, color: '#F94848', r: 1, c: this.cols - 2 }, this)
         ];
 
         this.store = useStore();
@@ -54,29 +54,33 @@ export class GameMap extends AcGameObject {
 
     }
 
+    // 增加监听事件
     add_listening_events() {
         if (this.store.state.record.isRecord) {
-            let k = 0;
+            // 在播放录像
+            let round = 0;
             const steps1 = this.store.state.record.steps1;
             const steps2 = this.store.state.record.steps2;
             const loser = this.store.state.record.recordLoser;
-            const [snake0, snake1] = this.snakes;
+            const [snake1, snake2] = this.snakes;
             const intervalId = setInterval(() => {
-                if (k >= steps1.length - 1) {
+                if (round >= steps1.length - 1) {
                     if (loser === 1 || loser === 3) {
-                        snake0.die();
+                        snake1.die(steps1[round]);
                     }
                     if (loser === 2 || loser === 3) {
-                        snake1.die();
+                        snake2.die(steps2[round]);
                     }
+                    this.store.commit('updatePlayingStatus', 'over')
                     clearInterval(intervalId);
                 } else {
-                    snake0.set_direction(parseInt(steps1[k]));
-                    snake1.set_direction(parseInt(steps2[k]));
-                    k++;
+                    snake1.set_direction(steps1[round]);
+                    snake2.set_direction(steps2[round]);
+                    round++;
                 }
             }, 500);
         } else {
+            /// 在对战
             // 聚焦到画布上
             this.ctx.canvas.focus();
 
@@ -89,18 +93,18 @@ export class GameMap extends AcGameObject {
                 else if (e.key === 'a' || e.key === 'ArrowLeft') d = 3;
 
                 if (d >= 0) {
-                    this.store.state.pk.socket.send(JSON.stringify({
-                        event: 'move',
-                        direction: d,
+                    this.store.state.game.socket.send(JSON.stringify({
+                        event: 2,
+                        direction: d
                     }));
                 }
             });
         }
     }
 
+    // 创建障碍物
     create_walls() {
         const g = this.gameMap;
-
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
                 if (g[r][c]) {
@@ -108,14 +112,6 @@ export class GameMap extends AcGameObject {
                 }
             }
         }
-
-        return true;
-    }
-
-    update_size() {
-        this.L = parseInt(Math.min(this.parent.clientWidth / this.cols, this.parent.clientHeight / this.rows));
-        this.ctx.canvas.width = this.L * this.cols;
-        this.ctx.canvas.height = this.L * this.rows;
     }
 
     // 判断玩家有没有准备好进行下一步
@@ -133,5 +129,12 @@ export class GameMap extends AcGameObject {
         for (const snake of this.snakes) {
             snake.next_step();
         }
+    }
+
+    // 每一帧更新画布大小
+    update_size() {
+        this.L = parseInt(Math.min(this.parent.clientWidth / this.cols, this.parent.clientHeight / this.rows));
+        this.ctx.canvas.width = this.L * this.cols;
+        this.ctx.canvas.height = this.L * this.rows;
     }
 }
