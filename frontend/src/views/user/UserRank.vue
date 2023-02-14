@@ -51,7 +51,9 @@
             >
           </td>
           <td>
-            <span>{{ user.username }}</span>
+            <span
+              :class="$store.state.user.id === user.id ? 'me' : 'not-me'"
+            >{{ user.username }}</span>
           </td>
           <td />
           <td>
@@ -198,5 +200,9 @@ img.user-avatar {
 
 .pagination {
   float: right;
+}
+
+.me {
+  font-weight: bold;
 }
 </style>

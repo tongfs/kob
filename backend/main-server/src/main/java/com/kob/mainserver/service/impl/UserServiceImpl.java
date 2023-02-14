@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
                     ".jpg",
             "https://youpeng-yp.oss-cn-chengdu.aliyuncs" +
                     ".com/avatar/2023-01-01/v2-f262a5a14d98ec31b59d1dc6893308e3_1440w.jpg",
+            "https://youpeng-yp.oss-cn-chengdu.aliyuncs.com/avatar/2023-01-01/1000.jpg",
     };
     private static final int DEFAULT_SCORE = 5000;
 

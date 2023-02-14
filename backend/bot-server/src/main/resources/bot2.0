@@ -29,8 +29,9 @@ public class SupplierImpl implements java.util.function.Supplier<Integer> {
         } catch (IOException e) {
             e.printStackTrace();
             result = 1;
+        } finally {
+            file.delete();
         }
-        file.delete();
         return result;
     }
 

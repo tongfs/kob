@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -20,7 +21,7 @@ import lombok.AllArgsConstructor;
  * @date 2023/2/4
  */
 @AllArgsConstructor
-public class Consumer implements Runnable {
+public class ThreadTask implements Runnable {
 
     private static final String AFTER_CLASS_NAME = " implements java.util.function.Supplier<Integer>";
     private static final String CLASS_NAME = "com.kob.botserver.service.impl.SupplierImpl";
@@ -36,7 +37,6 @@ public class Consumer implements Runnable {
             int i = code.indexOf(AFTER_CLASS_NAME);
             code = code.substring(0, i) + uuid + code.substring(i);
 
-            StringBuilder sb = new StringBuilder();
             String serializedStr = serializeGame();
 
             File file = new File(CLASS_NAME + uuid);
@@ -55,7 +55,10 @@ public class Consumer implements Runnable {
             botService.sendNextStep(gameSituation.getUserId(), nextStep);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            botService.sendNextStep(gameSituation.getUserId(), new Random().nextInt(4));
+        } finally {
+            System.out.println(Thread.currentThread().getName());
+
         }
     }
 

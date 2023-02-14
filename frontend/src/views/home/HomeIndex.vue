@@ -33,9 +33,6 @@
                 </div>
                 <ul>
                   <li>
-                    <b>首页：</b>就是这里
-                  </li>
-                  <li>
                     <b>对战：</b>游戏界面。两名玩家匹配完成后开始游戏，支持玩家手动控制，或编写 Bot 代码自动控制，从而实现人人、人机、机机对战；支持15秒匹配不到对手时系统派出内置 Bot 与玩家对战（<u>一定要等15秒啊</u>）
                   </li>
                   <li>
@@ -77,14 +74,13 @@
             >
               <div class="accordion-body">
                 <ul>
-                  <li>基于 SpringBoot + Vue 开发的前后端分离 Web 项目</li>
-                  <li>后端按照微服务的思想（如右图），分为 主服务（main-server）、匹配服务（match-server）、Bot代码运行服务（bot-server） 3个 SpringBoot 项目</li>
-                  <li>使用 MySQL 实现数据持久化，使用 MyBatisPlus 简化开发</li>
-                  <li>前后端通过 HTTP 实现常用的 CRUD 需求；游戏时，前后端建立 WebSocket 连接，实现全双工通信；各个服务之间使用 RestTemplate 发送请求</li>
-                  <li>使用 JWT 实现用户身份授权与验证</li>
-                  <li>bot-server 中，参考生产者-消费者模型和消息队列的思想，手动实现一个线程池，用于动态编译运行 Bot 代码；动态编译使用反射工具 JOOR 完成</li>
-                  <li>为保证游戏公平性，后端随机生成地图，并使用 FloodFill 算法判断地图合法性</li>
-                  <li>Git: <a href="https://github.com/tongfs/kob">https://github.com/tongfs/kob</a> </li>
+                  <li>基于 Vue + SpringBoot 开发的前后端分离 Web 项目，使用 MySQL 实现数据持久化</li>
+                  <li>使用 SpringSecurity + JWT 实现玩家身份认证</li>
+                  <li>前后端通过 HTTP 实现常用的 CRUD 需求；游戏时，前后端通过建立 WebSocket 连接实现全双工通信</li>
+                  <li>后端按照微服务的思想（如右图），分为 主服务（main-server）、匹配服务（match-server）、Bot代码运行服务（bot-server） 3个 SpringBoot 项目，各个服务之间使用 RestTemplate 发送请求</li>
+                  <li>为保证游戏公平性，地图由后端随机生成，并使用 FloodFill 算法判断地图合法性</li>
+                  <li>在 bot-server 中，参考生产者-消费者模型和消息队列的思想，手动实现一个线程池，用于动态编译运行 Bot 代码；动态编译使用反射工具 JOOR 完成</li>
+                  <li><a href="https://github.com/tongfs/kob">项目 Git 仓库地址</a> </li>
                 </ul>
               </div>
             </div>
@@ -112,7 +108,7 @@
             >
               <div class="accordion-body">
                 <ul>
-                  <li>适当场景引入 Redis</li>
+                  <li>适当场景引入 Redis 作为（如用户认证、游戏过程、排行榜）</li>
                   <li>使用 Minimax 和 Alpha-beta 剪枝算法优化 Bot 逻辑</li>
                   <li>尝试将 Bot 代码的编译运行放在容器中进行</li>
                   <li>完善用户体验：修改头像、修改密码等</li>

@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.kob.botserver.service.BotService;
-import com.kob.botserver.thread.MessageQueue;
+import com.kob.botserver.thread.ThreadPoolExecutor;
+import com.kob.botserver.thread.ThreadTask;
 import com.kob.common.model.dto.GameSituation;
 import com.kob.common.model.dto.NextStepDTO;
 
@@ -18,14 +19,15 @@ import com.kob.common.model.dto.NextStepDTO;
 @Service
 public class BotServiceImpl implements BotService {
 
-    private final MessageQueue messageQueue = new MessageQueue(this);
-
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
+
     @Override
     public void add(GameSituation gameSituation) {
-        messageQueue.add(gameSituation);
+        threadPoolExecutor.execute(new ThreadTask(gameSituation, this));
     }
 
     @Override
